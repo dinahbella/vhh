@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import { connectDB } from "./db/connectDB.js";
 import cookieParser from "cookie-parser";
-
+import authRouter from "./routes/auth-routes/authRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -33,6 +33,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api/auth", authRouter);
 
 app
   .listen(PORT, () => {
