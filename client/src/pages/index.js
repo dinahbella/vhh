@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
+import AuthLayout from "@/components/auth/layout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,5 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
-  return <div></div>;
+  return (
+    <div className=" flex flex-col overflow-hidden bg-white">
+      <h1> Headeer</h1>
+    </div>
+  );
 }
