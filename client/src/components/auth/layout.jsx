@@ -2,8 +2,8 @@ import React from "react";
 import CheckAuth from "../common/check-auth";
 
 export default function AuthLayout({ children }) {
-  const isAuthenticated = false;
-  const user = null;
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
   return (
     <CheckAuth isAuthenticated={isAuthenticated} user={user}>
       <div className=" flex min-h-screen w-full">

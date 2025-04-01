@@ -3,8 +3,8 @@ import ShoppingHeader from "./header";
 import CheckAuth from "../common/check-auth";
 
 export default function AdminShoppingLayout({ children }) {
-  const isAuthenticated = false;
-  const user = null;
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
   return (
     <CheckAuth isAuthenticated={isAuthenticated} user={user}>
       <div className="flex flex-col bg-white overflow-hidden">

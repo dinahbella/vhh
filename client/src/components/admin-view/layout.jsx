@@ -2,10 +2,10 @@ import React from "react";
 import AdminSidebar from "./sidebar";
 import AdminHeader from "./header";
 import CheckAuth from "../common/check-auth";
+import { useSelector } from "react-redux";
 
 export default function AdminLayout({ children }) {
-  const isAuthenticated = false;
-  const user = null;
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
   return (
     <CheckAuth isAuthenticated={isAuthenticated} user={user}>
       <div className="flex min-h-screen w-full">
