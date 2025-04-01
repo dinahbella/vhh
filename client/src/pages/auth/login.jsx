@@ -30,7 +30,7 @@ export default function Login() {
           style: { background: "#4BB543", color: "#fff" },
           iconTheme: { primary: "#fff", secondary: "#4BB543" },
         });
-        router.push("/");
+        // router.push("/");
       } else {
         throw new Error(res?.message || "Login failed");
       }

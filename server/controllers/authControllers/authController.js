@@ -97,5 +97,32 @@ export const login = async (req, res) => {
 };
 
 // logout
-
+export const logout = (req, res) => {
+  res.clearCookie("token").json({
+    success: true,
+    message: "Looged out successfully",
+  });
+};
 // middleware
+
+export const authMiddleware = async (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized: No token provided",
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "SECRET_KEY");
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized: Invalid token",
+    });
+  }
+};

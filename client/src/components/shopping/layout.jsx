@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ShoppingHeader from "./header";
 import CheckAuth from "../common/check-auth";
+import { checkAuth } from "@/store/auth-slice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function AdminShoppingLayout({ children }) {
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { user, isAuthenticated, isLoading } = useSelector(
+    (state) => state.auth
+  );
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+  if (isLoading) <div>Loading ....</div>;
 
   return (
     <CheckAuth isAuthenticated={isAuthenticated} user={user}>
