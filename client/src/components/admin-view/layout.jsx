@@ -5,6 +5,8 @@ import CheckAuth from "../common/check-auth";
 import { useSelector } from "react-redux";
 import { checkAuth } from "@/store/auth-slice";
 import { useDispatch } from "react-redux";
+import { Skeleton } from "@/components/ui/skeleton";
+
 export default function AdminLayout({ children }) {
   const { user, isAuthenticated, isLoading } = useSelector(
     (state) => state.auth
@@ -13,7 +15,8 @@ export default function AdminLayout({ children }) {
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
-  if (isLoading) <div>Loading ....</div>;
+  if (isLoading) return <Skeleton className="w-[800px] bg-black h-[600px] " />;
+
   return (
     <CheckAuth isAuthenticated={isAuthenticated} user={user}>
       <div className="flex min-h-screen w-full">

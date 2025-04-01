@@ -11,11 +11,9 @@ export default function CheckAuth({ isAuthenticated, user, children }) {
     // If user is not authenticated and not on login/register pages, redirect to login
     if (
       !isAuthenticated &&
-      !pathname.includes("/login") &&
-      !pathname.includes("/register")
+      !(pathname.includes("/login") || pathname.includes("/register"))
     ) {
-      router.push("/auth/login");
-      return;
+      return router.push("/auth/login");
     }
 
     // If authenticated and on login/register, redirect based on role
@@ -26,9 +24,8 @@ export default function CheckAuth({ isAuthenticated, user, children }) {
       if (user?.role === "admin") {
         router.push("/admin/dashboard");
       } else {
-        router.push("/shop/home");
+        return router.push("/shop/home");
       }
-      return;
     }
 
     // If non-admin tries to access admin route, redirect
@@ -37,8 +34,7 @@ export default function CheckAuth({ isAuthenticated, user, children }) {
       user?.role !== "admin" &&
       pathname.includes("/admin")
     ) {
-      router.push("/unauth-page");
-      return;
+      return router.push("/unauth-page");
     }
 
     // If admin tries to access shop route, redirect to admin dashboard
@@ -47,8 +43,7 @@ export default function CheckAuth({ isAuthenticated, user, children }) {
       user?.role === "admin" &&
       pathname.includes("/shop")
     ) {
-      router.push("/admin/dashboard");
-      return;
+      return router.push("/admin/dashboard");
     }
   }, [isAuthenticated, pathname, router, user?.role]);
 

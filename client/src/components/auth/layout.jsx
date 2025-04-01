@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import CheckAuth from "../common/check-auth";
 import { useDispatch, useSelector } from "react-redux";
 import { checkAuth } from "@/store/auth-slice";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AuthLayout({ children }) {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -11,7 +12,7 @@ export default function AuthLayout({ children }) {
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
-  if (isLoading) <div>Loading ....</div>;
+  if (isLoading) return <Skeleton className="w-[800px] bg-black h-[600px] " />;
 
   return (
     <CheckAuth isAuthenticated={isAuthenticated} user={user}>
