@@ -41,30 +41,61 @@ export const registerUser = async (req, res) => {
 };
 
 // login
-export const login = async (res, req) => {
-  const { email, password } = req.body;
+export const login = async (req, res) => {
   try {
-    const checkUser = await User.findOne({ email });
-    if (!checkUser)
-      return res.json({
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
         success: false,
-        message: "User dosen't exists! Please register first",
+        message: "Email and password are required",
       });
-    const isPasswordMatch = await bcrypt.compare(password, isPasswordMatch);
-    if (!isPasswordMatch)
-      return res.json({
+    }
+
+    const checkUser = await User.findOne({ email });
+    if (!checkUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User doesn't exist! Please register first",
+      });
+    }
+
+    const isPasswordMatch = await bcrypt.compare(password, checkUser.password);
+    if (!isPasswordMatch) {
+      return res.status(401).json({
         success: false,
         message: "Incorrect Password, Please try again",
       });
-    const token = jwt.sign({
-      id: checkUser._id,
-      role: checkUser.role,
-      email: checkUser.email,
+    }
+
+    const token = jwt.sign(
+      {
+        id: checkUser._id,
+        role: checkUser.role,
+        email: checkUser.email,
+      },
+      "SECRET_KEY",
+      { expiresIn: "7d" } // Corrected token expiration format
+    );
+
+    res.cookie("token", token, { httpOnly: true, secure: false });
+
+    res.status(200).json({
+      success: true,
+      message: "User logged in successfully",
+      user: {
+        id: checkUser._id,
+        email: checkUser.email,
+        role: checkUser.role,
+      },
+      token,
     });
   } catch (error) {
-    res.staus(500).json({ success: false, message: "Internal server error" });
+    console.error("Login error:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
 // logout
 
 // middleware

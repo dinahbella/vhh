@@ -23,49 +23,25 @@ export default function Register() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    try {
-      const res = await dispatch(registerUser(formData));
-      const data = res.data;
 
-      if (data?.success) {
-        toast.success(data.message || "Registration successful!", {
-          style: {
-            background: "#4BB543", // Green
-            color: "#fff",
-          },
-          iconTheme: {
-            primary: "#fff",
-            secondary: "#4BB543",
-          },
+    try {
+      const res = await dispatch(registerUser(formData)).unwrap(); // Ensures proper payload extraction
+
+      if (res?.success) {
+        toast.success(res.message || "Registration successful!", {
+          style: { background: "#4BB543", color: "#fff" },
+          iconTheme: { primary: "#fff", secondary: "#4BB543" },
         });
         router.push("/auth/login");
       } else {
-        toast.error(data?.message || "Registration failed", {
-          style: {
-            background: "#FF3333",
-            color: "#fff",
-          },
-          iconTheme: {
-            primary: "#fff",
-            secondary: "#FF3333",
-          },
-        });
+        throw new Error(res?.message || "Registration failed");
       }
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error(
-        error.response?.data?.message || "An unexpected error occurred",
-        {
-          style: {
-            background: "#FF3333",
-            color: "#fff",
-          },
-          iconTheme: {
-            primary: "#fff",
-            secondary: "#FF3333",
-          },
-        }
-      );
+      toast.error(error.message || "An unexpected error occurred", {
+        style: { background: "#FF3333", color: "#fff" },
+        iconTheme: { primary: "#fff", secondary: "#FF3333" },
+      });
     } finally {
       setIsSubmitting(false);
     }
