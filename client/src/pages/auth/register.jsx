@@ -5,8 +5,8 @@ import { registerUser } from "@/store/auth-slice";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { toast } from "sonner";
 
 const initialState = {
   userName: "",
@@ -23,16 +23,49 @@ export default function Register() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
-      await toast.promise(dispatch(registerUser(formData)).unwrap(), {
-        loading: "Creating account...",
-        success: "Account created successfully!",
-        error: (err) => err?.message || "Registration failed",
-      });
-      router.push("/auth/login");
+      const res = await dispatch(registerUser(formData));
+      const data = res.data;
+
+      if (data?.success) {
+        toast.success(data.message || "Registration successful!", {
+          style: {
+            background: "#4BB543", // Green
+            color: "#fff",
+          },
+          iconTheme: {
+            primary: "#fff",
+            secondary: "#4BB543",
+          },
+        });
+        router.push("/auth/login");
+      } else {
+        toast.error(data?.message || "Registration failed", {
+          style: {
+            background: "#FF3333",
+            color: "#fff",
+          },
+          iconTheme: {
+            primary: "#fff",
+            secondary: "#FF3333",
+          },
+        });
+      }
     } catch (error) {
-      // Error is already handled by toast.promise
+      console.error("Registration error:", error);
+      toast.error(
+        error.response?.data?.message || "An unexpected error occurred",
+        {
+          style: {
+            background: "#FF3333",
+            color: "#fff",
+          },
+          iconTheme: {
+            primary: "#fff",
+            secondary: "#FF3333",
+          },
+        }
+      );
     } finally {
       setIsSubmitting(false);
     }

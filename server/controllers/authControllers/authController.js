@@ -42,7 +42,25 @@ export const registerUser = async (req, res) => {
 
 // login
 export const login = async (res, req) => {
+  const { email, password } = req.body;
   try {
+    const checkUser = await User.findOne({ email });
+    if (!checkUser)
+      return res.json({
+        success: false,
+        message: "User dosen't exists! Please register first",
+      });
+    const isPasswordMatch = await bcrypt.compare(password, isPasswordMatch);
+    if (!isPasswordMatch)
+      return res.json({
+        success: false,
+        message: "Incorrect Password, Please try again",
+      });
+    const token = jwt.sign({
+      id: checkUser._id,
+      role: checkUser.role,
+      email: checkUser.email,
+    });
   } catch (error) {
     res.staus(500).json({ success: false, message: "Internal server error" });
   }
