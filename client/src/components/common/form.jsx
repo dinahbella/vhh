@@ -18,22 +18,22 @@ export default function Form({
   onSubmit,
   buttonText,
 }) {
-  const renderInputByComponentType = (getControlItem) => {
-    const value = formData[getControlItem.name || ""];
+  const renderInputByComponentType = (controlItem) => {
+    const value = formData[controlItem.name] || "";
 
-    switch (getControlItem.componentType) {
+    switch (controlItem.componentType) {
       case "input":
         return (
           <Input
-            name={getControlItem.name}
-            placeholder={getControlItem.placeholder}
-            id={getControlItem.name}
-            type={getControlItem.type}
+            name={controlItem.name}
+            placeholder={controlItem.placeholder}
+            id={controlItem.name}
+            type={controlItem.type}
             value={value}
             onChange={(e) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: e.target.value,
+                [controlItem.name]: e.target.value,
               })
             }
           />
@@ -46,21 +46,19 @@ export default function Form({
             onValueChange={(value) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: value,
+                [controlItem.name]: value,
               })
             }
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder={getControlItem.placeholder} />
+              <SelectValue placeholder={controlItem.label} />
             </SelectTrigger>
             <SelectContent>
-              {getControlItem.options && getControlItem.options.length > 0
-                ? getControlItem.map((optionItem) => (
-                    <SelectItem key={optionItem.id} value={optionItem.id}>
-                      {optionItem.label}
-                    </SelectItem>
-                  ))
-                : null}
+              {controlItem.options?.map((optionItem) => (
+                <SelectItem key={optionItem.value} value={optionItem.value}>
+                  {optionItem.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         );
@@ -68,16 +66,16 @@ export default function Form({
       case "textarea":
         return (
           <Textarea
-            name={getControlItem.name}
-            id={getControlItem.name}
-            placeholder={getControlItem.placeholder}
-            className="w-full border px-3 py-2 rounded"
-            rows={getControlItem.rows || 4}
+            name={controlItem.name}
+            id={controlItem.name}
+            placeholder={controlItem.placeholder}
+            className="w-full"
+            rows={controlItem.rows || 4}
             value={value}
             onChange={(e) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: e.target.value,
+                [controlItem.name]: e.target.value,
               })
             }
           />
@@ -86,15 +84,15 @@ export default function Form({
       default:
         return (
           <Input
-            name={getControlItem.name}
-            placeholder={getControlItem.placeholder}
-            id={getControlItem.name}
-            type={getControlItem.type}
+            name={controlItem.name}
+            placeholder={controlItem.placeholder}
+            id={controlItem.name}
+            type={controlItem.type || "text"}
             value={value}
             onChange={(e) =>
               setFormData({
                 ...formData,
-                [getControlItem.name]: e.target.value,
+                [controlItem.name]: e.target.value,
               })
             }
           />
@@ -104,7 +102,7 @@ export default function Form({
 
   return (
     <div>
-      <form action="" onSubmit={onSubmit}>
+      <form onSubmit={onSubmit}>
         <div className="flex flex-col gap-3">
           {formControls.map((controlItem) => (
             <div className="w-full grid gap-1.5" key={controlItem.name}>

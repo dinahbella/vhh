@@ -5,16 +5,18 @@ import React, { Fragment } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 
 const MenuItems = ({ setOpen }) => {
+  const router = useRouter();
+
   return (
     <nav className="mt-8 flex-col flex gap-2">
       {adminSidebarMenu.map((item) => (
         <div
           key={item.id}
           onClick={() => {
-            item.path;
+            router.push(item.path);
             setOpen ? setOpen(false) : null;
           }}
-          className="flex text-xl items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-black"
+          className="flex text-xl items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-black cursor-pointer"
         >
           {item.icons}
           <span>{item.label}</span>
@@ -26,6 +28,7 @@ const MenuItems = ({ setOpen }) => {
 
 export default function AdminSidebar({ open, setOpen }) {
   const router = useRouter();
+
   return (
     <Fragment>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -37,16 +40,14 @@ export default function AdminSidebar({ open, setOpen }) {
                 <h1 className="text-2xl font-extrabold">Admin Panel</h1>
               </SheetTitle>
             </SheetHeader>
-            <MenuItems />
+            <MenuItems setOpen={setOpen} />
           </div>
         </SheetContent>
       </Sheet>
       <aside className="hidden w-64 flex-col bg-background p-6 border-r lg:flex">
         <div
-          className="flex items-center gap-2 "
-          onClick={() => {
-            "/admin/dashboard";
-          }}
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => router.push("/admin/dashboard")}
         >
           <ChartNoAxesCombined size={30} />
           <h1 className="text-2xl font-extrabold">Admin Panel</h1>
