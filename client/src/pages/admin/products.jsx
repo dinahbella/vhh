@@ -61,12 +61,12 @@ export default function Products() {
               <SheetTitle>Add New Product</SheetTitle>
             </SheetHeader>
             <ProductImage
-              file={imageFile}
-              setFile={setImageFile}
+              imageFile={imageFile}
+              setImageFile={setImageFile}
               uploadedImageUrl={uploadedImageUrl}
               setUploadedImageUrl={setUploadedImageUrl}
             />
-            <div className="p-3">
+            <div className="py-6 px-3">
               <Form
                 formData={formData}
                 setFormData={handleFormDataChange}
