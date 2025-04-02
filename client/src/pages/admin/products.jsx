@@ -1,3 +1,4 @@
+import ProductImage from "@/components/admin-view/image-upload";
 import AdminLayout from "@/components/admin-view/layout";
 import Form from "@/components/common/form";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,8 @@ const initialStateFormData = {
 export default function Products() {
   const [openCreateProducts, setOpenCreateProducts] = useState(false);
   const [formData, setFormData] = useState(initialStateFormData);
-
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const onSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
@@ -58,6 +60,12 @@ export default function Products() {
             <SheetHeader>
               <SheetTitle>Add New Product</SheetTitle>
             </SheetHeader>
+            <ProductImage
+              file={imageFile}
+              setFile={setImageFile}
+              uploadedImageUrl={uploadedImageUrl}
+              setUploadedImageUrl={setUploadedImageUrl}
+            />
             <div className="p-3">
               <Form
                 formData={formData}

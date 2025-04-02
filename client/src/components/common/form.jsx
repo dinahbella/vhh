@@ -54,11 +54,13 @@ export default function Form({
               <SelectValue placeholder={controlItem.label} />
             </SelectTrigger>
             <SelectContent>
-              {controlItem.options?.map((optionItem) => (
-                <SelectItem key={optionItem.value} value={optionItem.value}>
-                  {optionItem.label}
-                </SelectItem>
-              ))}
+              {controlItem.options && controlItem.options.length > 0
+                ? controlItem.options.map((optionItem) => (
+                    <SelectItem key={optionItem.id} value={optionItem.id}>
+                      {optionItem.label}
+                    </SelectItem>
+                  ))
+                : null}
             </SelectContent>
           </Select>
         );
