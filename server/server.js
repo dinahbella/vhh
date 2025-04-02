@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { connectDB } from "./db/connectDB.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth-routes/authRoutes.js";
+import adminProductRouter from "./routes/admin/productRoutes.js";
 dotenv.config();
 
 const app = express();
@@ -34,6 +35,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRouter);
+app.use("/api/admin/products", adminProductRouter);
 
 app
   .listen(PORT, () => {
