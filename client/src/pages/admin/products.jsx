@@ -32,8 +32,6 @@ export default function Products() {
   const onSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
-    setOpenCreateProducts(false);
-    setFormData(initialStateFormData);
   };
   console.log("formData:", formData);
 
