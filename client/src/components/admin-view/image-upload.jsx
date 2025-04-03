@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
+import axios from "axios";
 
 export default function ProductImage({
   imageFile,
@@ -32,6 +33,20 @@ export default function ProductImage({
   const handleDrag = (e) => {
     e.preventDefault();
   };
+  const uploadImageToCloud = async () => {
+    const data = new FormData();
+    data.append("vhh", imageFile);
+    const res = await axios.post(
+      "http://localhost:7000/api/admin/products/upload-image",
+      data
+    );
+    console.log(res);
+
+    if (res) setUploadedImageUrl(res.data);
+  };
+  useEffect(() => {
+    if (imageFile !== null) uploadImageToCloud();
+  });
   return (
     <div className="w-full max-w-md mx-auto px-2 space-y-4">
       <Label className="text-lg block font-semibold px-3">Upload Image</Label>

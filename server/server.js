@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import { connectDB } from "./db/connectDB.js";
 import cookieParser from "cookie-parser";
-import authRouter from "./routes/auth-routes/authRoutes.js";
+import authRouter from "./routes/auth/authRoutes.js";
 import adminProductRouter from "./routes/admin/productRoutes.js";
 dotenv.config();
 
