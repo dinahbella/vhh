@@ -26,13 +26,16 @@ export default function Products() {
   const [openCreateProducts, setOpenCreateProducts] = useState(false);
   const [formData, setFormData] = useState(initialStateFormData);
   const [imageFile, setImageFile] = useState(null);
+  const [imageLoading, setImageLoading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+
   const onSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
     setOpenCreateProducts(false);
     setFormData(initialStateFormData);
   };
+  console.log("formData:", formData);
 
   const handleFormDataChange = (newFormData) => {
     setFormData(newFormData);
@@ -65,6 +68,7 @@ export default function Products() {
               setImageFile={setImageFile}
               uploadedImageUrl={uploadedImageUrl}
               setUploadedImageUrl={setUploadedImageUrl}
+              setImageLoading={setImageLoading}
             />
             <div className="py-6 px-3">
               <Form

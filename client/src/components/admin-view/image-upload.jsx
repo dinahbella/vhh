@@ -10,6 +10,7 @@ export default function ProductImage({
   setImageFile,
   uploadedImageUrl,
   setUploadedImageUrl,
+  setImageLoading,
 }) {
   const inputRef = useRef(null);
 
@@ -34,6 +35,7 @@ export default function ProductImage({
     e.preventDefault();
   };
   const uploadImageToCloud = async () => {
+    setImageLoading(true);
     const data = new FormData();
     data.append("vhh", imageFile);
     const res = await axios.post(
@@ -42,7 +44,10 @@ export default function ProductImage({
     );
     console.log(res);
 
-    if (res) setUploadedImageUrl(res.data);
+    if (res?.data?.success) {
+      setUploadedImageUrl(res.data.result.url);
+      setImageLoading(false);
+    }
   };
   useEffect(() => {
     if (imageFile !== null) uploadImageToCloud();
