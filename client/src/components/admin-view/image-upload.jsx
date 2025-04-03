@@ -4,54 +4,74 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { FileIcon, UploadCloudIcon, XIcon } from "lucide-react";
 import axios from "axios";
+import { Skeleton } from "../ui/skeleton";
 
 export default function ProductImage({
   imageFile,
   setImageFile,
+  imageLoading,
   uploadedImageUrl,
   setUploadedImageUrl,
   setImageLoading,
 }) {
   const inputRef = useRef(null);
 
+  // Handle file selection from input
   const handleFileChange = (e) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       setImageFile(selectedFile);
     }
   };
+
+  // Remove the selected image
   const handleRemoveImage = () => {
     setImageFile(null);
+    setUploadedImageUrl(null);
     if (inputRef.current) {
       inputRef.current.value = "";
     }
   };
+
+  // Handle drag-and-drop file selection
   const handleDrop = (e) => {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile) setImageFile(droppedFile);
   };
-  const handleDrag = (e) => {
-    e.preventDefault();
-  };
+  const handleDrag = (e) => e.preventDefault();
+
+  // Upload image to server
   const uploadImageToCloud = async () => {
+    if (!imageFile) return;
+
     setImageLoading(true);
     const data = new FormData();
-    data.append("vhh", imageFile);
-    const res = await axios.post(
-      "http://localhost:7000/api/admin/products/upload-image",
-      data
-    );
-    console.log(res);
+    data.append("file", imageFile); // ✅ Correct key for backend
 
-    if (res?.data?.success) {
-      setUploadedImageUrl(res.data.result.url);
+    try {
+      const res = await axios.post(
+        "http://localhost:7000/api/admin/products/upload-image",
+        data,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+      if (res?.data?.success && res?.data?.result?.url) {
+        setUploadedImageUrl(res.data.result.url);
+      } else {
+        console.error("Unexpected API response structure:", res.data);
+      }
+    } catch (error) {
+      console.error("Image upload failed:", error);
+    } finally {
       setImageLoading(false);
     }
   };
+
+  // Upload image automatically when selected
   useEffect(() => {
-    if (imageFile !== null) uploadImageToCloud();
-  });
+    if (imageFile) uploadImageToCloud();
+  }, [imageFile]); // ✅ Added dependency to prevent infinite re-renders
+
   return (
     <div className="w-full max-w-md mx-auto px-2 space-y-4">
       <Label className="text-lg block font-semibold px-3">Upload Image</Label>
@@ -68,6 +88,7 @@ export default function ProductImage({
           ref={inputRef}
           onChange={handleFileChange}
         />
+
         {!imageFile ? (
           <Label
             htmlFor="image-upload"
@@ -78,20 +99,22 @@ export default function ProductImage({
               Drag & drop or click to upload images
             </span>
           </Label>
+        ) : imageLoading ? (
+          <Skeleton className="h-10 bg-primary" />
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <FileIcon className="w-7 h-7 text-primary mr-2" />
+              <p className="text-sm font-medium">{imageFile.name}</p>
             </div>
-            <p className="text-sm font-medium">{imageFile.name}</p>
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground hover:text-primary "
+              className="text-muted-foreground hover:text-primary"
               onClick={handleRemoveImage}
             >
               <XIcon className="w-4 h-4" />
-              <span className=" sr-only"> Remaove file</span>
+              <span className="sr-only">Remove file</span> {/* ✅ Fixed typo */}
             </Button>
           </div>
         )}

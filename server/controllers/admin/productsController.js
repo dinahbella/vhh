@@ -84,7 +84,7 @@ export const getAllProducts = async (req, res) => {
     const listOfProducts = await Product.find({});
     res.status(200).json({
       success: true,
-      message: "All products fetche successfully",
+      message: "All products fetched successfully",
       data: listOfProducts,
     });
   } catch (error) {

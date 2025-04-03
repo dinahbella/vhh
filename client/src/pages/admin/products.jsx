@@ -9,7 +9,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
+import { getAllProducts } from "@/store/admin/productSlice";
 import React, { Fragment, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const initialStateFormData = {
   image: null,
@@ -28,13 +31,16 @@ export default function Products() {
   const [imageFile, setImageFile] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
+  const { productList } = useSelector((state) => state.adminProducts);
+  const dispatch = useDispatch();
 
   const onSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
   };
-  console.log("formData:", formData);
-
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
   const handleFormDataChange = (newFormData) => {
     setFormData(newFormData);
   };
@@ -67,6 +73,7 @@ export default function Products() {
               uploadedImageUrl={uploadedImageUrl}
               setUploadedImageUrl={setUploadedImageUrl}
               setImageLoading={setImageLoading}
+              imageLoading={imageLoading}
             />
             <div className="py-6 px-3">
               <Form
