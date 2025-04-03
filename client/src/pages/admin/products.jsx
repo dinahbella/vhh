@@ -11,8 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
 import { addNewProduct, getAllProducts } from "@/store/admin/productSlice";
-import React, { Fragment, useState } from "react";
-import { useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -33,8 +32,17 @@ export default function Products() {
   const [imageFile, setImageFile] = useState(null);
   const [imageLoading, setImageLoading] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
-  const { productList } = useSelector((state) => state.adminProducts);
+  const [currentEditedId, setCurrentEditedId] = useState(null);
   const dispatch = useDispatch();
+
+  const { productList } = useSelector((state) => state.adminProducts);
+
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
+
+  console.log("Fetched productList:", productList);
+
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(
@@ -52,14 +60,13 @@ export default function Products() {
       }
     });
   };
-  useEffect(() => {
-    dispatch(getAllProducts());
-  }, [dispatch]);
-  console.log(productList);
 
   const handleFormDataChange = (newFormData) => {
     setFormData(newFormData);
   };
+
+  // Extract products array from the productList object
+  const products = productList?.data || [];
 
   return (
     <AdminLayout>
@@ -71,11 +78,13 @@ export default function Products() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {productList && productList.length > 0
-            ? productList.map((productItem) => (
-                <AdminProductTile product={productItem} />
-              ))
-            : null}
+          {products.length > 0 ? (
+            products.map((productItem) => (
+              <AdminProductTile key={productItem._id} product={productItem} />
+            ))
+          ) : (
+            <p>No products found.</p>
+          )}
         </div>
         <Sheet
           open={openCreateProducts}

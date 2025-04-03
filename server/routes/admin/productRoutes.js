@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.post("/upload-image", upload.single("file"), handleImageUpload);
+router.post("/upload-image", upload.single("vhh"), handleImageUpload);
 router.post("/add", addProduct);
 router.get("/get", getAllProducts);
 router.put("/edit/:id", editProduct);

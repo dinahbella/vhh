@@ -3,7 +3,7 @@ import axios from "axios";
 
 const initialState = {
   isLoading: false,
-  productList: [],
+  productList: { success: true, message: "", data: [] },
 };
 
 export const addNewProduct = createAsyncThunk(

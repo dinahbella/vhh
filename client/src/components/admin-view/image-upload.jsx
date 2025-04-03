@@ -47,7 +47,7 @@ export default function ProductImage({
 
     setImageLoading(true);
     const data = new FormData();
-    data.append("file", imageFile); // ✅ Correct key for backend
+    data.append("vhh", imageFile); // ✅ Correct key for backend
 
     try {
       const res = await axios.post(

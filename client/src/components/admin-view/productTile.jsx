@@ -5,12 +5,12 @@ import { Button } from "../ui/button";
 export default function AdminProductTile({ product }) {
   return (
     <div>
-      <Card className="w-full max-w-sm mx-auto">
+      <Card className="w-full max-w-sm mx-auto ">
         <div>
           <div className="relative">
             <img
-              src={product?.image}
-              alt={product?.title}
+              src={product.image}
+              alt={product.title}
               className="w-full h-[300px] object-cover rounded-t-lg"
             />
           </div>
@@ -20,11 +20,15 @@ export default function AdminProductTile({ product }) {
               <span
                 className={`${
                   product?.salePrice > 0 ? "line-through" : ""
-                }text-lg font-semibold text-primary`}
+                } text-lg font-semibold `}
               >
                 ${product?.price}
               </span>
-              <span className="text-lg font-bold">${product?.salePrice}</span>
+              {product?.salePrice > 0 ? (
+                <span className="text-lg font-bold text-primary">
+                  ${product?.salePrice}
+                </span>
+              ) : null}
             </div>
           </CardContent>
           <CardFooter className="flex justify-between items-center">
