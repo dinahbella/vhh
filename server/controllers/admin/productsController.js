@@ -87,7 +87,7 @@ export const editProduct = async (req, res) => {
     } = req.body;
 
     // Check if the product exists
-    const getProduct = await Product.findByIdAndUpdate(id);
+    let getProduct = await Product.findByIdAndUpdate(id);
     if (!getProduct) {
       return res.status(404).json({
         success: false,
@@ -100,8 +100,9 @@ export const editProduct = async (req, res) => {
     getProduct.description = description || getProduct.description;
     getProduct.category = category || getProduct.category;
     getProduct.brand = brand || getProduct.brand;
-    getProduct.price = price || getProduct.price;
-    getProduct.salePrice = salePrice || getProduct.salePrice;
+    getProduct.price = price === "" ? 0 : price || getProduct.price;
+    getProduct.salePrice =
+      salePrice === "" ? 0 : salePrice || getProduct.salePrice;
     getProduct.totalStock = totalStock || getProduct.totalStock;
     getProduct.image = image || getProduct.image;
 
@@ -125,7 +126,7 @@ export const editProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await Product.findByIdAndDelete();
+    const product = await Product.findByIdAndDelete(id);
     if (!product) {
       return res.status(404).json({
         success: false,

@@ -12,6 +12,7 @@ import {
 import { addProductFormElements } from "@/config";
 import {
   addNewProduct,
+  deleteProduct,
   editProduct,
   getAllProducts,
 } from "@/store/admin/productSlice";
@@ -39,45 +40,73 @@ export default function Products() {
   const [currentEditedId, setCurrentEditedId] = useState(null);
   const dispatch = useDispatch();
 
-  const { productList } = useSelector((state) => state.adminProducts);
+  const { productList, loading, error } = useSelector(
+    (state) => state.adminProducts
+  );
+
+  function isFormValid() {
+    return Object.keys(formData)
+      .filter((currentKey) => currentKey !== "averageReview")
+      .map((key) => formData[key] !== "")
+      .every((item) => item);
+  }
 
   useEffect(() => {
     dispatch(getAllProducts());
   }, [dispatch]);
 
-  console.log("Fetched productList:", productList);
-
-  const onSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    currentEditedId !== null
-      ? dispatch(
+    setImageLoading(true);
+
+    try {
+      const productData = {
+        ...formData,
+        image: uploadedImageUrl,
+      };
+
+      if (currentEditedId) {
+        const result = await dispatch(
           editProduct({
             id: currentEditedId,
-            formData,
+            formData: productData,
           })
-        ).then((data) => {
-          console.log(data, "edit");
-          if (data?.payload.success) {
-            dispatch(getAllProducts());
-            setFormData(initialStateFormData);
-            setOpenCreateProducts(false);
-            setCurrentEditedId(null);
-          }
-        })
-      : dispatch(
-          addNewProduct({
-            ...formData,
-            image: uploadedImageUrl,
-          })
-        ).then((data) => {
-          if (data?.payload.success) {
-            setOpenCreateProducts(false);
-            dispatch(getAllProducts());
-            setImageFile(null);
-            setFormData(initialStateFormData);
-            toast.success("Product Added Successfully");
-          }
-        });
+        );
+
+        if (result.payload?.success) {
+          toast.success("Product updated successfully");
+          dispatch(getAllProducts());
+          resetForm();
+        }
+      } else {
+        const result = await dispatch(addNewProduct(productData));
+        if (result.payload?.success) {
+          toast.success("Product added successfully");
+          dispatch(getAllProducts());
+          resetForm();
+        }
+      }
+    } catch (err) {
+      toast.error(error?.message || "Operation failed");
+      console.error("Product operation error:", err);
+    } finally {
+      setImageLoading(false);
+    }
+  };
+  function handleDelete(getCurrentProductId) {
+    dispatch(deleteProduct(getCurrentProductId)).then((data) => {
+      if (data?.payload?.success) {
+        toast("Product deleted successfully");
+        dispatch(getAllProducts());
+      }
+    });
+  }
+  const resetForm = () => {
+    setFormData(initialStateFormData);
+    setImageFile(null);
+    setUploadedImageUrl("");
+    setCurrentEditedId(null);
+    setOpenCreateProducts(false);
   };
 
   const handleFormDataChange = (newFormData) => {
@@ -91,10 +120,19 @@ export default function Products() {
     <AdminLayout>
       <Fragment>
         <div className="mb-5 flex justify-end">
-          <Button onClick={() => setOpenCreateProducts(true)}>
-            Add New Product
+          <Button
+            onClick={() => setOpenCreateProducts(true)}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Add New Product"}
           </Button>
         </div>
+
+        {error && (
+          <div className="mb-4 text-red-500">
+            {error.message || "Failed to load products"}
+          </div>
+        )}
 
         <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
           {products.length > 0 ? (
@@ -105,30 +143,31 @@ export default function Products() {
                 product={productItem}
                 setCurrentEditedId={setCurrentEditedId}
                 setFormData={setFormData}
-                // handleDelete={handleDelete}
+                setUploadedImageUrl={setUploadedImageUrl}
+                handleDelete={handleDelete}
               />
             ))
           ) : (
-            <p>No products found.</p>
+            <p>{loading ? "Loading products..." : "No products found."}</p>
           )}
         </div>
+
         <Sheet
           open={openCreateProducts}
           onOpenChange={(open) => {
             if (!open) {
-              setFormData(initialStateFormData);
+              resetForm();
             }
-            setCurrentEditedId(null);
-            setFormData(initialStateFormData);
             setOpenCreateProducts(open);
           }}
         >
           <SheetContent side="right" className="overflow-auto">
             <SheetHeader>
               <SheetTitle>
-                {currentEditedId !== null ? "Edit product" : "Add New product"}
+                {currentEditedId ? "Edit Product" : "Add New Product"}
               </SheetTitle>
             </SheetHeader>
+
             <ProductImage
               imageFile={imageFile}
               setImageFile={setImageFile}
@@ -137,17 +176,18 @@ export default function Products() {
               setImageLoading={setImageLoading}
               imageLoading={imageLoading}
               currentEditedId={currentEditedId}
-              isEditMode={currentEditedId !== null}
+              isEditMode={!!currentEditedId}
             />
+
             <div className="py-6 px-3">
               <Form
                 formData={formData}
                 setFormData={handleFormDataChange}
                 formControls={addProductFormElements}
-                buttonText={
-                  currentEditedId !== null ? "Edit Product" : "Add Product"
-                }
-                onSubmit={onSubmit}
+                buttonText={currentEditedId ? "Update Product" : "Add Product"}
+                onSubmit={handleSubmit}
+                disabled={imageLoading}
+                isBtnDisabled={!isFormValid()}
               />
             </div>
           </SheetContent>

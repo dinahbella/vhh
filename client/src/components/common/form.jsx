@@ -17,6 +17,7 @@ export default function Form({
   setFormData,
   onSubmit,
   buttonText,
+  isBtnDisabled,
 }) {
   const renderInputByComponentType = (controlItem) => {
     const value = formData[controlItem.name] || "";
@@ -115,7 +116,11 @@ export default function Form({
             </div>
           ))}
         </div>
-        <Button type="submit" className="mt-3 hover:bg-green-900 w-full">
+        <Button
+          disabled={isBtnDisabled}
+          type="submit"
+          className="mt-3 hover:bg-green-900 w-full"
+        >
           {buttonText || "Submit"}
         </Button>
       </form>
