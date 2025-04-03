@@ -87,7 +87,7 @@ export const editProduct = async (req, res) => {
     } = req.body;
 
     // Check if the product exists
-    const getProduct = await Product.findById(id);
+    const getProduct = await Product.findByIdAndUpdate(id);
     if (!getProduct) {
       return res.status(404).json({
         success: false,

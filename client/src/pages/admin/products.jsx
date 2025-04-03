@@ -10,7 +10,11 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { addNewProduct, getAllProducts } from "@/store/admin/productSlice";
+import {
+  addNewProduct,
+  editProduct,
+  getAllProducts,
+} from "@/store/admin/productSlice";
 import React, { Fragment, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,20 +49,35 @@ export default function Products() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    dispatch(
-      addNewProduct({
-        ...formData,
-        image: uploadedImageUrl,
-      })
-    ).then((data) => {
-      if (data?.payload.success) {
-        setOpenCreateProducts(false);
-        dispatch(getAllProducts());
-        setImageFile(null);
-        setFormData(initialStateFormData);
-        toast.success("Product Added Successfully");
-      }
-    });
+    currentEditedId !== null
+      ? dispatch(
+          editProduct({
+            id: currentEditedId,
+            formData,
+          })
+        ).then((data) => {
+          console.log(data, "edit");
+          if (data?.payload.success) {
+            dispatch(getAllProducts());
+            setFormData(initialStateFormData);
+            setOpenCreateProducts(false);
+            setCurrentEditedId(null);
+          }
+        })
+      : dispatch(
+          addNewProduct({
+            ...formData,
+            image: uploadedImageUrl,
+          })
+        ).then((data) => {
+          if (data?.payload.success) {
+            setOpenCreateProducts(false);
+            dispatch(getAllProducts());
+            setImageFile(null);
+            setFormData(initialStateFormData);
+            toast.success("Product Added Successfully");
+          }
+        });
   };
 
   const handleFormDataChange = (newFormData) => {
@@ -80,7 +99,14 @@ export default function Products() {
         <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
           {products.length > 0 ? (
             products.map((productItem) => (
-              <AdminProductTile key={productItem._id} product={productItem} />
+              <AdminProductTile
+                setOpenCreateProducts={setOpenCreateProducts}
+                key={productItem._id}
+                product={productItem}
+                setCurrentEditedId={setCurrentEditedId}
+                setFormData={setFormData}
+                // handleDelete={handleDelete}
+              />
             ))
           ) : (
             <p>No products found.</p>
@@ -92,12 +118,16 @@ export default function Products() {
             if (!open) {
               setFormData(initialStateFormData);
             }
+            setCurrentEditedId(null);
+            setFormData(initialStateFormData);
             setOpenCreateProducts(open);
           }}
         >
           <SheetContent side="right" className="overflow-auto">
             <SheetHeader>
-              <SheetTitle>Add New Product</SheetTitle>
+              <SheetTitle>
+                {currentEditedId !== null ? "Edit product" : "Add New product"}
+              </SheetTitle>
             </SheetHeader>
             <ProductImage
               imageFile={imageFile}
@@ -106,13 +136,17 @@ export default function Products() {
               setUploadedImageUrl={setUploadedImageUrl}
               setImageLoading={setImageLoading}
               imageLoading={imageLoading}
+              currentEditedId={currentEditedId}
+              isEditMode={currentEditedId !== null}
             />
             <div className="py-6 px-3">
               <Form
                 formData={formData}
                 setFormData={handleFormDataChange}
                 formControls={addProductFormElements}
-                buttonText="Add Product"
+                buttonText={
+                  currentEditedId !== null ? "Edit Product" : "Add Product"
+                }
                 onSubmit={onSubmit}
               />
             </div>
