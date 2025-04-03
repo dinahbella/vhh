@@ -1,5 +1,6 @@
 import ProductImage from "@/components/admin-view/image-upload";
 import AdminLayout from "@/components/admin-view/layout";
+import AdminProductTile from "@/components/admin-view/productTile";
 import Form from "@/components/common/form";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,6 +13,7 @@ import { addProductFormElements } from "@/config";
 import { addNewProduct, getAllProducts } from "@/store/admin/productSlice";
 import React, { Fragment, useState } from "react";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 
 const initialStateFormData = {
@@ -33,7 +35,6 @@ export default function Products() {
   const [uploadedImageUrl, setUploadedImageUrl] = useState("");
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
-
   const onSubmit = (e) => {
     e.preventDefault();
     dispatch(
@@ -42,10 +43,12 @@ export default function Products() {
         image: uploadedImageUrl,
       })
     ).then((data) => {
-      console.log(data);
       if (data?.payload.success) {
+        setOpenCreateProducts(false);
+        dispatch(getAllProducts());
         setImageFile(null);
         setFormData(initialStateFormData);
+        toast.success("Product Added Successfully");
       }
     });
   };
@@ -66,7 +69,14 @@ export default function Products() {
             Add New Product
           </Button>
         </div>
-        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4"></div>
+
+        <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {productList && productList.length > 0
+            ? productList.map((productItem) => (
+                <AdminProductTile product={productItem} />
+              ))
+            : null}
+        </div>
         <Sheet
           open={openCreateProducts}
           onOpenChange={(open) => {
