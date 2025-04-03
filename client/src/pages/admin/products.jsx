@@ -9,7 +9,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { addProductFormElements } from "@/config";
-import { getAllProducts } from "@/store/admin/productSlice";
+import { addNewProduct, getAllProducts } from "@/store/admin/productSlice";
 import React, { Fragment, useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,11 +36,24 @@ export default function Products() {
 
   const onSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    dispatch(
+      addNewProduct({
+        ...formData,
+        image: uploadedImageUrl,
+      })
+    ).then((data) => {
+      console.log(data);
+      if (data?.payload.success) {
+        setImageFile(null);
+        setFormData(initialStateFormData);
+      }
+    });
   };
   useEffect(() => {
     dispatch(getAllProducts());
   }, [dispatch]);
+  console.log(productList);
+
   const handleFormDataChange = (newFormData) => {
     setFormData(newFormData);
   };

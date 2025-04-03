@@ -3,18 +3,18 @@ import axios from "axios";
 
 const initialState = {
   isLoading: false,
-  productsList: [],
+  productList: [],
 };
 
 export const addNewProduct = createAsyncThunk(
-  "/products/addnewproduct",
+  "/products/addNewProduct",
   async (formData) => {
     const result = await axios.post(
       "http://localhost:7000/api/admin/products/add",
       formData,
       {
         headers: {
-          "Content-type": "application/json",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -23,7 +23,7 @@ export const addNewProduct = createAsyncThunk(
 );
 
 export const getAllProducts = createAsyncThunk(
-  "/products/getallproducts",
+  "/products/getAllProducts",
   async () => {
     const result = await axios.get(
       "http://localhost:7000/api/admin/products/get"
@@ -32,7 +32,7 @@ export const getAllProducts = createAsyncThunk(
   }
 );
 export const editProduct = createAsyncThunk(
-  "/products/editproduct",
+  "/products/editProduct",
   async (id, formData) => {
     const result = await axios.put(
       `http://localhost:7000/api/admin/products/edit/${id}`,
@@ -40,7 +40,7 @@ export const editProduct = createAsyncThunk(
       formData,
       {
         headers: {
-          "Content-type": "application/json",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -48,7 +48,7 @@ export const editProduct = createAsyncThunk(
   }
 );
 export const deleteProduct = createAsyncThunk(
-  "/products/deleteproduct",
+  "/products/deleteProduct",
   async (id) => {
     const result = await axios.delete(
       `http://localhost:7000/api/admin/products/delete/${id}`,
@@ -58,7 +58,7 @@ export const deleteProduct = createAsyncThunk(
   }
 );
 const AdminProductSlice = createSlice({
-  name: "adminProductSlice",
+  name: "adminProducts",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -68,11 +68,11 @@ const AdminProductSlice = createSlice({
       })
       .addCase(getAllProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.productsList = action.payload;
+        state.productList = action.payload;
       })
       .addCase(getAllProducts.rejected, (state, action) => {
         state.isLoading = false;
-        state.productsList = [];
+        state.productList = [];
       });
   },
 });
