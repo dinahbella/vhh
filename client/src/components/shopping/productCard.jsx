@@ -1,7 +1,7 @@
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Button } from "../ui/button";
-import { brandOptionsMap, categoryOptionsMap } from "@/config";
 import { Badge } from "../ui/badge";
+import { brandOptionsMap, categoryOptionsMap } from "@/config";
 
 function ShoppingProductTile({
   product,
@@ -45,7 +45,7 @@ function ShoppingProductTile({
             <span
               className={`${
                 product?.salePrice > 0 ? "line-through" : ""
-              } text-lg font-semibold text-primary`}
+              } text-lg font-semibold `}
             >
               ${product?.price}
             </span>

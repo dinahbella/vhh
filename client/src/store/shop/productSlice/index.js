@@ -9,7 +9,7 @@ const initialState = {
 
 export const getFilteredProducts = createAsyncThunk(
   "/products/getAllProducts",
-  async ({ filterParams, sortParams }) => {
+  async () => {
     console.log(getFilteredProducts, "getFilteredProducts");
 
     // const query = new URLSearchParams({
