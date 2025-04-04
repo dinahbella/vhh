@@ -6,6 +6,7 @@ import { connectDB } from "./db/connectDB.js";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth/authRoutes.js";
 import adminProductRouter from "./routes/admin/productRoutes.js";
+import shopProductRouter from "./routes/shop/productRoute.js";
 dotenv.config();
 
 const app = express();
@@ -36,6 +37,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductRouter);
+app.use("/api/shop/products", shopProductRouter);
 
 app
   .listen(PORT, () => {
