@@ -6,7 +6,7 @@ import {
   UserCog,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import { logout } from "@/store/auth-slice";
 import { usePathname } from "next/navigation";
 import UserCartContent from "./cartWrapper";
+import { getCartItems } from "@/store/shop/cartSlice";
 
 export function MenuItems() {
   const pathname = usePathname();
@@ -51,11 +52,16 @@ export function MenuItems() {
 export function HeaderRight() {
   const { user } = useSelector((state) => state.auth);
   const [openCartSheet, setOpenCartSheet] = useState(false);
+  const { cartItems } = useSelector((state) => state.shopCart);
   const router = useRouter();
-  const dispatch = useDispatch;
+  const dispatch = useDispatch();
   function handleLogout() {
     dispatch(logout());
   }
+  useEffect(() => {
+    dispatch(getCartItems(user?.userId));
+  }, [dispatch]);
+
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4 md:px-4">
       <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
@@ -67,11 +73,11 @@ export function HeaderRight() {
         >
           <ShoppingCart className="w-6 h-6 text-primary" />
           <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
-            {/* {cartItems?.items?.length || 0} */}
+            {cartItems?.items?.length || 0}
           </span>
           <span className="sr-only">User cart</span>
         </Button>
-        <UserCartContent />
+        <UserCartContent cartItems={cartItems} />
       </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

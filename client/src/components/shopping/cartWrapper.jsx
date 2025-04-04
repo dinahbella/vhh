@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { Button } from "../ui/button";
 
-export default function UserCartContent() {
+export default function UserCartContent({ cartItems }) {
   const [loading, setLoading] = useState(false);
 
   return (
@@ -12,7 +12,15 @@ export default function UserCartContent() {
           Your Cart
         </SheetTitle>
       </SheetHeader>
-      <div className="mt-8 space-x-4"></div>
+      <div className="mt-8 space-x-4">
+        {cartItems && cartItems.length > 0 ? (
+          cartItems.map((item) => (
+            <UserCartContent key={item.id} cartItems={item} /> // Make sure to provide a unique key
+          ))
+        ) : (
+          <p className="text-lg font-semibold">Your cart is empty</p>
+        )}
+      </div>
       <div className="mt-8 space-x-4">
         <div className="flex justify-between">
           <p className="text-lg font-semibold">Total Items:</p>

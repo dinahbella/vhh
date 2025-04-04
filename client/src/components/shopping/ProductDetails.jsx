@@ -7,7 +7,12 @@ import StarRatingComponent from "../common/star-rating";
 import { Separator } from "../ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function ProductDetails({ open, setOpen, productDetails }) {
+export default function ProductDetails({
+  open,
+  setOpen,
+  productDetails,
+  handleAddtoCart,
+}) {
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   return (
@@ -61,7 +66,7 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
               <Button
                 className="w-full"
                 onClick={() =>
-                  handleAddToCart(
+                  handleAddtoCart(
                     productDetails?._id,
                     productDetails?.totalStock
                   )

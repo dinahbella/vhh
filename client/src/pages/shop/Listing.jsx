@@ -54,7 +54,7 @@ export default function Listing() {
     console.log(productDetails, "productDetails");
     dispatch(getProductDetails(getCurrentProductId));
   }
-  function handleAddToCart(getCurrentProductId, getTotalStock) {
+  function handleAddtoCart(getCurrentProductId, getTotalStock) {
     console.log(cartItems);
     let getCartItems = cartItems.items || [];
 
@@ -127,8 +127,6 @@ export default function Listing() {
     if (productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
 
-  console.log(productList, "productList");
-
   return (
     <AdminShoppingLayout>
       <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 p-4 md:p-6">
@@ -191,7 +189,7 @@ export default function Listing() {
                   key={productItem.id}
                   product={productItem}
                   handleGetProductDetails={handleGetProductDetails}
-                  handleAddToCart={handleAddToCart}
+                  handleAddtoCart={handleAddtoCart}
                 />
               ))
             ) : (
