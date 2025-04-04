@@ -2,25 +2,27 @@ import ProductFilter from "@/components/shopping/filter";
 import AdminShoppingLayout from "@/components/shopping/layout";
 import ShoppingProductTile from "@/components/shopping/productCard";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { getAllProducts } from "@/store/admin/productSlice";
+import { getFilteredProducts } from "@/store/shop/productSlice";
 import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
 } from "@radix-ui/react-dropdown-menu";
 import { ArrowUpDownIcon } from "lucide-react";
 import React, { Fragment, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Listing() {
   const diaspatch = useDispatch();
-
+  const { productList } = useSelector((state) => state.shopProducts);
+  useEffect(() => {
+    diaspatch(getFilteredProducts());
+  }, [diaspatch]);
   return (
     <AdminShoppingLayout>
       <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6 ">
