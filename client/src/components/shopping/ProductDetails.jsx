@@ -4,8 +4,12 @@ import { Button } from "../ui/button";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Label } from "../ui/label";
 import StarRatingComponent from "../common/star-rating";
+import { Separator } from "../ui/separator";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function ProductDetails({ open, setOpen, productDetails }) {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -41,10 +45,10 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
           </div>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex items-center gap-0.5">
-              <StarRatingComponent />
+              <StarRatingComponent rating={averageReview} />
             </div>
             <span className="text-muted-foreground">
-              {/* ({averageReview.toFixed(2)}) */}
+              ({averageReview.toFixed(2)})
             </span>
           </div>
           <div className="mt-5 mb-5">
@@ -66,9 +70,8 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
               </Button>
             )}
           </div>
-          <Separator className="border border-green-400 border-dashed opacity-80 transition-opacity duration-300 hover:opacity-100 my-5" />
+          <Separator className="border border-green-600 border-dashed opacity-80 transition-opacity duration-300 hover:opacity-100 my-5" />
 
-          {/* <Separator />
           <div className="max-h-[300px] overflow-auto">
             <h2 className="text-xl font-bold mb-4">Reviews</h2>
             <div className="grid gap-6">
@@ -96,8 +99,8 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
               ) : (
                 <h1>No Reviews</h1>
               )}
-            </div> */}
-          {/* <div className="mt-10 flex-col flex gap-2">
+            </div>
+            <div className="mt-10 flex-col flex gap-2">
               <Label>Write a review</Label>
               <div className="flex gap-1">
                 <StarRatingComponent
@@ -117,8 +120,8 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
               >
                 Submit
               </Button>
-            </div> */}
-          {/* </div> */}
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
