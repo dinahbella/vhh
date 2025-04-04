@@ -10,16 +10,46 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
-import { getFilteredProducts } from "@/store/shop/productSlice";
+import {
+  getFilteredProducts,
+  getProductDetails,
+} from "@/store/shop/productSlice";
 import { ArrowUpDownIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+function createSearchParamsHelper(filterParams) {
+  const queryParams = [];
+
+  for (const [key, value] of Object.entries(filterParams)) {
+    if (Array.isArray(value) && value.length > 0) {
+      const paramValue = value.join(",");
+
+      queryParams.push(`${key}=${encodeURIComponent(paramValue)}`);
+    }
+  }
+
+  console.log(queryParams, "queryParams");
+
+  return queryParams.join("&");
+}
 export default function Listing() {
   const dispatch = useDispatch();
-  const { productList } = useSelector((state) => state.shopProducts);
+  const { productList, productDetails } = useSelector(
+    (state) => state.shopProducts
+  );
   const [filter, setFilter] = useState({});
   const [sort, setSort] = useState(null);
+  const searchParams = useSearchParams();
+  const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+
+  const categorySearchParam = searchParams.get("category") || "default";
+
+  function handleGetProductDetails(getCurrentProductId) {
+    console.log(productDetails, "productDetails");
+    dispatch(getProductDetails(getCurrentProductId));
+  }
 
   function handleSort(value) {
     setSort(value);
@@ -44,13 +74,29 @@ export default function Listing() {
     setFilter(cpyFilters);
     sessionStorage.setItem("filter", JSON.stringify(cpyFilters));
   }
+  useEffect(() => {
+    setSort("price-lowtohigh");
+    setFilter(JSON.parse(sessionStorage.getItem("filters")) || {});
+  }, [categorySearchParam]);
 
   useEffect(() => {
-    dispatch(getFilteredProducts());
-  }, [dispatch]);
+    setFilter(JSON.parse(sessionStorage.getItem("filter")) || {});
+  }, []);
+
+  useEffect(() => {
+    if (filter !== null && sort !== null)
+      dispatch(getFilteredProducts({ filterParams: filter, sortParams: sort }));
+  }, [dispatch, sort, filter]);
+
+  useEffect(() => {
+    if (productDetails !== null) setOpenDetailsDialog(true);
+  }, [productDetails]);
+
+  console.log(productList, "productList");
+
   return (
     <AdminShoppingLayout>
-      <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6">
+      <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 p-4 md:p-6">
         <ProductFilter filter={filter} handleFilter={handleFilter} />
 
         {/* Product Listing Section */}
@@ -109,6 +155,7 @@ export default function Listing() {
                 <ShoppingProductTile
                   key={productItem.id}
                   product={productItem}
+                  handleGetProductDetails={handleGetProductDetails}
                 />
               ))
             ) : (

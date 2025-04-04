@@ -9,20 +9,21 @@ const initialState = {
 
 export const getFilteredProducts = createAsyncThunk(
   "/products/getAllProducts",
-  async () => {
+  async ({ filterParams, sortParams }) => {
+    // async () => {
     console.log(getFilteredProducts, "getFilteredProducts");
 
-    // const query = new URLSearchParams({
-    //   ...filterParams,
-    //   sortBy: sortParams,
-    // });
-    const result = await axios.get(
-      `http://localhost:7000/api/shop/products/get`
-    );
-
+    const query = new URLSearchParams({
+      ...filterParams,
+      sortBy: sortParams,
+    });
     // const result = await axios.get(
-    //   `http://localhost:7000/api/shop/products/get?${query}`
+    //   `http://localhost:7000/api/shop/products/get`
     // );
+
+    const result = await axios.get(
+      `http://localhost:7000/api/shop/products/get?${query}`
+    );
 
     console.log(result);
 
@@ -30,8 +31,8 @@ export const getFilteredProducts = createAsyncThunk(
   }
 );
 
-export const fetchProductDetails = createAsyncThunk(
-  "/products/fetchProductDetails",
+export const getProductDetails = createAsyncThunk(
+  "/products/getProductDetails",
   async (id) => {
     const result = await axios.get(
       `http://localhost:5000/api/shop/products/get/${id}`
@@ -62,14 +63,14 @@ const shopProductSlice = createSlice({
         state.isLoading = false;
         state.productList = [];
       })
-      .addCase(fetchProductDetails.pending, (state, action) => {
+      .addCase(getProductDetails.pending, (state, action) => {
         state.isLoading = true;
       })
-      .addCase(fetchProductDetails.fulfilled, (state, action) => {
+      .addCase(getProductDetails.fulfilled, (state, action) => {
         state.isLoading = false;
         state.productDetails = action.payload.data;
       })
-      .addCase(fetchProductDetails.rejected, (state, action) => {
+      .addCase(getProductDetails.rejected, (state, action) => {
         state.isLoading = false;
         state.productDetails = null;
       });
