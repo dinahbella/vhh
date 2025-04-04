@@ -1,6 +1,7 @@
 import ProductFilter from "@/components/shopping/filter";
 import AdminShoppingLayout from "@/components/shopping/layout";
 import ShoppingProductTile from "@/components/shopping/productCard";
+import ProductDetails from "@/components/shopping/ProductDetails";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -165,6 +166,11 @@ export default function Listing() {
             )}
           </div>
         </div>
+        <ProductDetails
+          open={openDetailsDialog}
+          setOpen={setOpenDetailsDialog}
+          productDetails={productDetails}
+        />
       </div>
     </AdminShoppingLayout>
   );

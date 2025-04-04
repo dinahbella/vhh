@@ -1,7 +1,11 @@
 import React from "react";
-import { Dialog } from "../ui/dialog";
+import { Dialog, DialogContent } from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Label } from "../ui/label";
+import StarRatingComponent from "../common/star-rating";
 
-export default function ProductDetails({ open, setOpen }) {
+export default function ProductDetails({ open, setOpen, productDetails }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -23,24 +27,24 @@ export default function ProductDetails({ open, setOpen }) {
           </div>
           <div className="flex items-center justify-between">
             <p
-              className={`text-3xl font-bold text-primary ${
+              className={`text-3xl font-bold  ${
                 productDetails?.salePrice > 0 ? "line-through" : ""
               }`}
             >
               ${productDetails?.price}
             </p>
             {productDetails?.salePrice > 0 ? (
-              <p className="text-2xl font-bold text-muted-foreground">
+              <p className="text-2xl font-bold text-primary">
                 ${productDetails?.salePrice}
               </p>
             ) : null}
           </div>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex items-center gap-0.5">
-              <StarRatingComponent rating={averageReview} />
+              <StarRatingComponent />
             </div>
             <span className="text-muted-foreground">
-              ({averageReview.toFixed(2)})
+              {/* ({averageReview.toFixed(2)}) */}
             </span>
           </div>
           <div className="mt-5 mb-5">
@@ -62,7 +66,9 @@ export default function ProductDetails({ open, setOpen }) {
               </Button>
             )}
           </div>
-          <Separator />
+          <Separator className="border border-green-400 border-dashed opacity-80 transition-opacity duration-300 hover:opacity-100 my-5" />
+
+          {/* <Separator />
           <div className="max-h-[300px] overflow-auto">
             <h2 className="text-xl font-bold mb-4">Reviews</h2>
             <div className="grid gap-6">
@@ -70,7 +76,7 @@ export default function ProductDetails({ open, setOpen }) {
                 reviews.map((reviewItem) => (
                   <div className="flex gap-4">
                     <Avatar className="w-10 h-10 border">
-                      <AvatarFallback>
+                      <AvatarFallback className="bg-primary text-white font-extrabold">
                         {reviewItem?.userName[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
@@ -90,8 +96,8 @@ export default function ProductDetails({ open, setOpen }) {
               ) : (
                 <h1>No Reviews</h1>
               )}
-            </div>
-            <div className="mt-10 flex-col flex gap-2">
+            </div> */}
+          {/* <div className="mt-10 flex-col flex gap-2">
               <Label>Write a review</Label>
               <div className="flex gap-1">
                 <StarRatingComponent
@@ -111,8 +117,8 @@ export default function ProductDetails({ open, setOpen }) {
               >
                 Submit
               </Button>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
         </div>
       </DialogContent>
     </Dialog>
