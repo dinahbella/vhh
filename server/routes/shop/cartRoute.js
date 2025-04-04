@@ -2,7 +2,6 @@ import express from "express";
 import {
   addToCart,
   deleteCartItem,
-  getCart,
   getCartItems,
   updateCartItemQty,
 } from "../../controllers/shop/cartController.js";

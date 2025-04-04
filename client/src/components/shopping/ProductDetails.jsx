@@ -45,10 +45,11 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
           </div>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex items-center gap-0.5">
-              <StarRatingComponent rating={averageReview} />
+              {/* <StarRatingComponent rating={averageReview} /> */}
+              <StarRatingComponent />
             </div>
             <span className="text-muted-foreground">
-              ({averageReview.toFixed(2)})
+              {/* ({averageReview.toFixed(2)}) */}
             </span>
           </div>
           <div className="mt-5 mb-5">
@@ -72,7 +73,7 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
           </div>
           <Separator className="border border-green-600 border-dashed opacity-80 transition-opacity duration-300 hover:opacity-100 my-5" />
 
-          <div className="max-h-[300px] overflow-auto">
+          {/* <div className="max-h-[300px] overflow-auto">
             <h2 className="text-xl font-bold mb-4">Reviews</h2>
             <div className="grid gap-6">
               {reviews && reviews.length > 0 ? (
@@ -120,8 +121,8 @@ export default function ProductDetails({ open, setOpen, productDetails }) {
               >
                 Submit
               </Button>
-            </div>
-          </div>
+            </div> */}
+          {/* </div> */}
         </div>
       </DialogContent>
     </Dialog>

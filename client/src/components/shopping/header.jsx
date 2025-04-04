@@ -6,7 +6,7 @@ import {
   UserCog,
 } from "lucide-react";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,6 +23,7 @@ import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useRouter } from "next/router";
 import { logout } from "@/store/auth-slice";
 import { usePathname } from "next/navigation";
+import UserCartContent from "./cartWrapper";
 
 export function MenuItems() {
   const pathname = usePathname();
@@ -49,6 +50,7 @@ export function MenuItems() {
 
 export function HeaderRight() {
   const { user } = useSelector((state) => state.auth);
+  const [openCartSheet, setOpenCartSheet] = useState(false);
   const router = useRouter();
   const dispatch = useDispatch;
   function handleLogout() {
@@ -56,19 +58,21 @@ export function HeaderRight() {
   }
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4 md:px-4">
-      {/* <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}> */}
-      <Button
-        onClick={() => setOpenCartSheet(true)}
-        variant="outline"
-        size="icon"
-        className="relative"
-      >
-        <ShoppingCart className="w-6 h-6 text-primary" />
-        <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
-          {/* {cartItems?.items?.length || 0} */}
-        </span>
-        <span className="sr-only">User cart</span>
-      </Button>
+      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+        <Button
+          onClick={() => setOpenCartSheet(true)}
+          variant="outline"
+          size="icon"
+          className="relative"
+        >
+          <ShoppingCart className="w-6 h-6 text-primary" />
+          <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
+            {/* {cartItems?.items?.length || 0} */}
+          </span>
+          <span className="sr-only">User cart</span>
+        </Button>
+        <UserCartContent />
+      </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="bg-primary">

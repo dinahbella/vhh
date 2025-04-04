@@ -11,6 +11,7 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { sortOptions } from "@/config";
+import { addToCart } from "@/store/shop/cartSlice";
 import {
   getFilteredProducts,
   getProductDetails,
@@ -19,6 +20,7 @@ import { ArrowUpDownIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "sonner";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
@@ -40,18 +42,50 @@ export default function Listing() {
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
+  const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
   const [filter, setFilter] = useState({});
   const [sort, setSort] = useState(null);
   const searchParams = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
-
   const categorySearchParam = searchParams.get("category") || "default";
 
   function handleGetProductDetails(getCurrentProductId) {
     console.log(productDetails, "productDetails");
     dispatch(getProductDetails(getCurrentProductId));
   }
+  function handleAddToCart(getCurrentProductId, getTotalStock) {
+    console.log(cartItems);
+    let getCartItems = cartItems.items || [];
 
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId === getCurrentProductId
+      );
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        if (getQuantity + 1 > getTotalStock) {
+          toast.error(
+            "You cannot add more than available stock quantity in cart."
+          );
+
+          return;
+        }
+      }
+    }
+    dispatch(
+      addToCart({
+        productId: getCurrentProductId,
+        userId: user?.id,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        toast.success("Product added to cart successfully!");
+        setOpenDetailsDialog(false);
+      }
+    });
+  }
   function handleSort(value) {
     setSort(value);
   }
@@ -157,6 +191,7 @@ export default function Listing() {
                   key={productItem.id}
                   product={productItem}
                   handleGetProductDetails={handleGetProductDetails}
+                  handleAddToCart={handleAddToCart}
                 />
               ))
             ) : (
