@@ -56,7 +56,7 @@ export default function Listing() {
   }
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
     console.log(cartItems);
-    let getCartItems = cartItems.items || [];
+    let getCartItems = cartItems?.items || [];
 
     if (getCartItems.length) {
       const indexOfCurrentItem = getCartItems.findIndex(

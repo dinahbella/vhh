@@ -59,8 +59,10 @@ export function HeaderRight() {
     dispatch(logout());
   }
   useEffect(() => {
-    dispatch(getCartItems(user?.userId));
+    dispatch(getCartItems(user?.id));
   }, [dispatch]);
+
+  console.log(cartItems, "cartItems");
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4 md:px-4">
@@ -77,7 +79,14 @@ export function HeaderRight() {
           </span>
           <span className="sr-only">User cart</span>
         </Button>
-        <UserCartContent cartItems={cartItems} />
+        <UserCartContent
+          setOpenCartSheet={setOpenCartSheet}
+          cartItems={
+            cartItems && cartItems.items && cartItems.items.length > 0
+              ? cartItems.items
+              : []
+          }
+        />
       </Sheet>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -112,8 +121,6 @@ export function HeaderRight() {
 
 export default function ShoppingHeader() {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
-  console.log(user);
-
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
@@ -140,8 +147,6 @@ export default function ShoppingHeader() {
         <div className="hidden lg:block">
           <MenuItems />
         </div>
-
-        {/* Authentication */}
         <div>
           {isAuthenticated ? (
             <div className="hidden lg:block">
