@@ -8,18 +8,21 @@ const initialState = {
 };
 
 export const getFilteredProducts = createAsyncThunk(
-  "/products/fetchAllProducts",
+  "/products/getAllProducts",
   async ({ filterParams, sortParams }) => {
     console.log(getFilteredProducts, "getFilteredProducts");
 
-    const query = new URLSearchParams({
-      ...filterParams,
-      sortBy: sortParams,
-    });
-
+    // const query = new URLSearchParams({
+    //   ...filterParams,
+    //   sortBy: sortParams,
+    // });
     const result = await axios.get(
-      `http://localhost:7000/api/shop/products/get?${query}`
+      `http://localhost:7000/api/shop/products/get`
     );
+
+    // const result = await axios.get(
+    //   `http://localhost:7000/api/shop/products/get?${query}`
+    // );
 
     console.log(result);
 
