@@ -3,8 +3,9 @@ import React, { Fragment } from "react";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { object } from "zod";
 
-export default function ProductFilter() {
+export default function ProductFilter({ filter, handleFilter }) {
   return (
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       <div className="p-4 bg-green-600 text-white rounded-t-lg">
@@ -29,6 +30,13 @@ export default function ProductFilter() {
                     className="flex items-center gap-3 transition-transform duration-300 hover:translate-x-1"
                   >
                     <Checkbox
+                      checked={
+                        filter &&
+                        Object.keys(filter).length > 0 &&
+                        filter[keyItem] &&
+                        filter[keyItem].indexOf(item.id) > -1
+                      }
+                      onCheckedChange={() => handleFilter(keyItem, item.id)}
                       className="w-5 h-5 border-gray-300 rounded focus:ring-green-500 transition-all duration-300 ease-in-out 
                           hover:scale-105 active:scale-95 checked:bg-green-600 checked:border-green-600"
                     />
