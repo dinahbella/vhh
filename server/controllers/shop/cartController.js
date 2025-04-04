@@ -155,24 +155,32 @@ export const deleteCartItem = async (req, res) => {
         message: "Please provide all the fields",
       });
     }
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId }).populate({
+      path: "items.productId",
+      select: "title image price",
+    });
     if (!cart) {
       return res.status(404).json({
         success: false,
         message: "Cart not found",
       });
     }
-    const itemIndex = cart.items.findIndex(
-      (item) => item.productId.toString() === productId
+    cart.items = cart.items.filter(
+      (item) => item.productId.toString() !== productId
     );
-    if (itemIndex === -1) {
-      return res.status(404).json({
-        success: false,
-        message: "Item not found in cart",
-      });
-    }
-    cart.items.splice(itemIndex, 1);
     await cart.save();
+    await Cart.populate({
+      path: "items.productId",
+      select: "title image price",
+    });
+    const populateCartItems = cart.items.map((item) => ({
+      productId: item.productId ? item.productId._id : null,
+      image: item.productId ? item.productId.image : null,
+      title: item.productId ? item.productId.title : "Product not found",
+      price: item.productId ? item.productId.price : null,
+      salePrice: item.productId ? item.productId.salePrice : null,
+      quantity: item.quantity,
+    }));
     res.status(200).json({
       success: true,
       message: "Item deleted from cart successfully",
