@@ -22,17 +22,25 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useRouter } from "next/router";
 import { logout } from "@/store/auth-slice";
+import { usePathname } from "next/navigation";
 
 export function MenuItems() {
+  const pathname = usePathname();
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center justify-center gap-6 lg:flex-row">
       {shoppingHeaderItems.map((menuItem) => (
         <Link
           href={menuItem.path}
           key={menuItem.id}
-          className="text-sm font-medium px-6 font-mono pt-4 cursor-pointer"
+          className="relative inline-block p-4 font-mono text-sm font-medium cursor-pointer 
+             transition-all duration-300 ease-in-out 
+             hover:text-white hover:shadow-md
+             before:absolute before:inset-0 before:bg-primary before:scale-x-0 
+             before:transition-transform before:duration-300 before:ease-in-out 
+             before:rounded-md before:z-[-1] 
+             hover:before:scale-x-100"
         >
-          {menuItem.label} {/* ✅ Fix: Ensure menu text is displayed */}
+          {menuItem.label}
         </Link>
       ))}
     </nav>
