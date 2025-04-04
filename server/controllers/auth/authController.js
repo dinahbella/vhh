@@ -73,6 +73,7 @@ export const login = async (req, res) => {
         id: checkUser._id,
         role: checkUser.role,
         email: checkUser.email,
+        userName: checkUser.userName,
       },
       "SECRET_KEY",
       { expiresIn: "7d" } // Corrected token expiration format
@@ -87,6 +88,7 @@ export const login = async (req, res) => {
         id: checkUser._id,
         email: checkUser.email,
         role: checkUser.role,
+        userName: checkUser.userName,
       },
       token,
     });
