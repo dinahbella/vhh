@@ -1,5 +1,6 @@
 import ProductFilter from "@/components/shopping/filter";
 import AdminShoppingLayout from "@/components/shopping/layout";
+import ShoppingProductTile from "@/components/shopping/productCard";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -7,10 +8,19 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { sortOptions } from "@/config";
+import { getAllProducts } from "@/store/admin/productSlice";
+import {
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@radix-ui/react-dropdown-menu";
 import { ArrowUpDownIcon } from "lucide-react";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 export default function Listing() {
+  const diaspatch = useDispatch();
+
   return (
     <AdminShoppingLayout>
       <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 p-4 md:p-6 ">
@@ -32,12 +42,24 @@ export default function Listing() {
                   <span>Sort by</span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[200px]"
-              ></DropdownMenuContent>
+              <DropdownMenuContent align="end" className="w-[200px]">
+                <DropdownMenuRadioGroup>
+                  {sortOptions.map((sortItem) => (
+                    <DropdownMenuRadioItem
+                      key={sortItem.id}
+                      className="flex items-center gap-2 hover:bg-primary
+                      hover:text-white"
+                    >
+                      {sortItem.label}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
             </DropdownMenu>
           </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-4 p-4">
+          <ShoppingProductTile />
         </div>
       </div>
     </AdminShoppingLayout>
