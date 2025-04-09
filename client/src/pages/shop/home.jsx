@@ -31,6 +31,7 @@ import ShoppingProductTile from "@/components/shopping/productCard";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 import { addToCart, getCartItems } from "@/store/shop/cartSlice";
+import ProductDetails from "@/components/shopping/ProductDetails";
 
 const categories = [
   { id: "men", label: "Men", icon: ShirtIcon },
@@ -288,6 +289,11 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <ProductDetails
+          open={openDetailsDialog}
+          setOpen={setOpenDetailsDialog}
+          productDetails={productDetails}
+        />
       </div>
     </AdminShoppingLayout>
   );

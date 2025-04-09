@@ -22,17 +22,50 @@ import {
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { useRouter } from "next/router";
 import { logout } from "@/store/auth-slice";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import UserCartContent from "./cartWrapper";
 import { getCartItems } from "@/store/shop/cartSlice";
+import { useCallback } from "react";
+import { Label } from "../ui/label";
 
 export function MenuItems() {
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleNavigate = useCallback(
+    (menuItem) => {
+      if (typeof window !== "undefined") {
+        sessionStorage.removeItem("filters");
+
+        const isFilterCategory =
+          menuItem.id !== "home" &&
+          menuItem.id !== "products" &&
+          menuItem.id !== "search";
+
+        const currentFilter = isFilterCategory
+          ? { category: [menuItem.id] }
+          : null;
+
+        sessionStorage.setItem("filters", JSON.stringify(currentFilter));
+
+        if (pathname.includes("listing") && currentFilter !== null) {
+          // Add search params manually
+          const params = new URLSearchParams();
+          params.set("category", menuItem.id);
+          router.push(`${pathname}?${params.toString()}`);
+        } else {
+          router.push(menuItem.path);
+        }
+      }
+    },
+    [pathname, router]
+  );
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center justify-center gap-6 lg:flex-row">
       {shoppingHeaderItems.map((menuItem) => (
-        <Link
-          href={menuItem.path}
+        <Label
+          onClick={() => handleNavigate(menuItem)}
           key={menuItem.id}
           className="relative inline-block p-4 font-mono text-sm font-medium cursor-pointer 
              transition-all duration-300 ease-in-out 
@@ -43,7 +76,7 @@ export function MenuItems() {
              hover:before:scale-x-100"
         >
           {menuItem.label}
-        </Link>
+        </Label>
       ))}
     </nav>
   );
