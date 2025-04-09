@@ -8,6 +8,7 @@ import authRouter from "./routes/auth/authRoutes.js";
 import adminProductRouter from "./routes/admin/productRoutes.js";
 import shopProductRouter from "./routes/shop/productRoute.js";
 import cartRouter from "./routes/shop/cartRoute.js";
+import shopAddressRouter from "./routes/shop/addressRoute.js";
 dotenv.config();
 
 const app = express();
@@ -40,6 +41,7 @@ app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductRouter);
 app.use("/api/shop/products", shopProductRouter);
 app.use("/api/shop/cart", cartRouter);
+app.use("/api/shop/address", shopAddressRouter);
 
 app
   .listen(PORT, () => {

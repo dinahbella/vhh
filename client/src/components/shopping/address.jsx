@@ -3,13 +3,14 @@ import CommonForm from "../common/form";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { addressFormControls } from "@/config";
 import { useDispatch, useSelector } from "react-redux";
+
+import AddressCard from "./addressCard";
 import {
   addNewAddress,
   deleteAddress,
   editaAddress,
   fetchAllAddresses,
-} from "@/store/shop/address-slice";
-import AddressCard from "./addressCard";
+} from "@/store/shop/addressSlice";
 
 const initialAddressFormData = {
   address: "",
