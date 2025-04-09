@@ -9,6 +9,8 @@ import adminProductRouter from "./routes/admin/productRoutes.js";
 import shopProductRouter from "./routes/shop/productRoute.js";
 import cartRouter from "./routes/shop/cartRoute.js";
 import shopAddressRouter from "./routes/shop/addressRoute.js";
+import shopOrderRouter from "./routes/shop/order-routes.js";
+
 dotenv.config();
 
 const app = express();
@@ -42,6 +44,7 @@ app.use("/api/admin/products", adminProductRouter);
 app.use("/api/shop/products", shopProductRouter);
 app.use("/api/shop/cart", cartRouter);
 app.use("/api/shop/address", shopAddressRouter);
+app.use("/api/shop/order", shopOrderRouter);
 
 app
   .listen(PORT, () => {
