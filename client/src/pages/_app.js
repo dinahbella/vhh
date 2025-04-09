@@ -7,8 +7,8 @@ export default function App({ Component, pageProps }) {
   return (
     <div>
       <Provider store={store}>
+        <Toaster richColors position="top-right" />
         <Component {...pageProps} />
-        <Toaster />
       </Provider>
     </div>
   );

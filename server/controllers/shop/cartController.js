@@ -148,22 +148,18 @@ export const updateCartItemQty = async (req, res) => {
 };
 export const deleteCartItem = async (req, res) => {
   try {
-    const { userId, productId } = req.body;
+    const { userId, productId } = req.params;
 
-    // Validate inputs
+    // 🔍 Validate inputs
     if (!userId || !productId) {
       return res.status(400).json({
         success: false,
-        message: "Please provide all the fields",
+        message: "Both userId and productId are required",
       });
     }
 
-    // Find the cart and populate product details
-    const cart = await Cart.findOne({ userId }).populate({
-      path: "items.productId",
-      select: "image title price salePrice",
-    });
-
+    // 📦 Find cart and check existence
+    const cart = await Cart.findOne({ userId });
     if (!cart) {
       return res.status(404).json({
         success: false,
@@ -171,22 +167,33 @@ export const deleteCartItem = async (req, res) => {
       });
     }
 
-    // Filter out the deleted item
+    // Check if product exists in cart
+    const itemExists = cart.items.some(
+      (item) => item.productId && item.productId.toString() === productId
+    );
+    if (!itemExists) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found in cart",
+      });
+    }
+
+    // ❌ Remove item from cart
     cart.items = cart.items.filter(
       (item) => item.productId && item.productId.toString() !== productId
     );
 
-    // Save updated cart
+    // 💾 Save updated cart
     await cart.save();
 
-    // Populate again to ensure product details are included
-    await cart.populate({
+    // ♻️ Populate product details after update
+    const populatedCart = await Cart.populate(cart, {
       path: "items.productId",
       select: "image title price salePrice",
     });
 
-    // Format response data
-    const updatedCartItems = cart.items.map((item) => ({
+    // 🧾 Format and return updated items
+    const updatedCartItems = populatedCart.items.map((item) => ({
       productId: item.productId?._id || null,
       image: item.productId?.image || null,
       title: item.productId?.title || "Product not found",
@@ -195,16 +202,16 @@ export const deleteCartItem = async (req, res) => {
       quantity: item.quantity,
     }));
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Item deleted from cart successfully",
-      data: updatedCartItems, // Only returning items, not the full cart
+      data: updatedCartItems,
     });
   } catch (error) {
     console.error("Error deleting cart item:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
-      message: "An error occurred while deleting the item",
+      message: "Internal server error while deleting the item",
     });
   }
 };

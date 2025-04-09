@@ -4,65 +4,82 @@ import { useDispatch, useSelector } from "react-redux";
 import { deleteCartItem, updateCartQuantity } from "@/store/shop/cartSlice";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 function UserCartItemsContent({ cartItem }) {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const { productList } = useSelector((state) => state.shopProducts);
+  const [isMaxStockReached, setIsMaxStockReached] = useState(false);
+
+  // Check stock availability when component mounts or cartItem changes
+  useEffect(() => {
+    if (cartItem && productList.length) {
+      const product = productList.find((p) => p._id === cartItem.productId);
+      if (product) {
+        setIsMaxStockReached(cartItem.quantity >= product.totalStock);
+      }
+    }
+  }, [cartItem, productList]);
 
   function handleUpdateQuantity(getCartItem, typeOfAction) {
-    if (typeOfAction == "plus") {
-      let getCartItems = cartItems.items || [];
+    if (!getCartItem) return;
 
-      if (getCartItems.length) {
-        const indexOfCurrentCartItem = getCartItems.findIndex(
-          (item) => item.productId === getCartItem?.productId
-        );
+    const newQuantity =
+      typeOfAction === "plus"
+        ? getCartItem.quantity + 1
+        : getCartItem.quantity - 1;
 
-        const getCurrentProductIndex = productList.findIndex(
-          (product) => product._id === getCartItem?.productId
-        );
-        const getTotalStock = productList[getCurrentProductIndex].totalStock;
+    // Prevent quantity from going below 1
+    if (newQuantity < 1) return;
 
-        console.log(getCurrentProductIndex, getTotalStock, "getTotalStock");
-
-        if (indexOfCurrentCartItem > -1) {
-          const getQuantity = getCartItems[indexOfCurrentCartItem].quantity;
-          if (getQuantity + 1 > getTotalStock) {
-            toast.error("You have reached the maximum stock limit");
-          }
-        }
-      }
+    // Check stock availability
+    const product = productList.find((p) => p._id === getCartItem.productId);
+    if (
+      product &&
+      typeOfAction === "plus" &&
+      newQuantity > product.totalStock
+    ) {
+      toast.error("You have reached the maximum stock limit");
+      return;
     }
 
     dispatch(
       updateCartQuantity({
         userId: user?.id,
-        productId: getCartItem?.productId,
-        quantity:
-          typeOfAction === "plus"
-            ? getCartItem?.quantity + 1
-            : getCartItem?.quantity - 1,
+        productId: getCartItem.productId,
+        quantity: newQuantity,
       })
     ).then((data) => {
       if (data?.payload?.success) {
-        toast.success(`Quantity updated to ${getCartItem?.quantity}`);
+        toast.success(`Quantity updated to ${newQuantity}`);
       }
     });
   }
 
   function handleCartItemDelete(getCartItem) {
+    if (!getCartItem) return;
+
     dispatch(
-      deleteCartItem({ userId: user?.id, productId: getCartItem?.productId })
+      deleteCartItem({
+        userId: user?.id,
+        productId: getCartItem.productId,
+      })
     ).then((data) => {
       if (data?.payload?.success) {
-        toast({
-          title: "Cart item is deleted successfully",
-        });
+        toast.success("Item removed from cart");
       }
     });
   }
+
+  // Calculate price safely
+  const calculatePrice = () => {
+    const price =
+      cartItem?.salePrice > 0 ? cartItem.salePrice : cartItem?.price;
+    const quantity = cartItem?.quantity || 0;
+    return (price * quantity).toFixed(2);
+  };
 
   return (
     <motion.div
@@ -70,40 +87,48 @@ function UserCartItemsContent({ cartItem }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ duration: 0.2 }}
     >
       {/* Product Image */}
-      <img
-        src={cartItem?.image}
-        alt={cartItem?.title}
-        className="w-20 h-20 rounded-md object-cover"
-      />
+      <div className="w-20 h-20 flex-shrink-0">
+        <img
+          src={cartItem?.image || "/placeholder-product.jpg"}
+          alt={cartItem?.title || "Product image"}
+          className="w-full h-full rounded-md object-cover"
+          onError={(e) => {
+            e.target.src = "/placeholder-product.jpg";
+          }}
+        />
+      </div>
 
       {/* Product Details */}
-      <div className="flex-1">
-        <h3 className="font-bold text-lg text-gray-900">{cartItem?.title}</h3>
+      <div className="flex-1 min-w-0">
+        <h3 className="font-bold text-lg text-gray-900 truncate">
+          {cartItem?.title || "Unknown Product"}
+        </h3>
         <div className="flex items-center gap-2 mt-2">
-          {/* Decrease Quantity Button */}
           <Button
             variant="outline"
-            className="h-8 w-8 rounded-full flex items-center justify-center transition-transform active:scale-90"
+            className="h-8 w-8 rounded-full p-0"
             size="icon"
-            disabled={cartItem?.quantity === 1}
+            disabled={cartItem?.quantity <= 1}
             onClick={() => handleUpdateQuantity(cartItem, "minus")}
+            aria-label="Decrease quantity"
           >
             <Minus className="w-4 h-4 text-gray-700" />
           </Button>
 
-          {/* Quantity Count */}
-          <span className="font-semibold text-gray-900 text-lg">
-            {cartItem?.quantity}
+          <span className="font-semibold text-gray-900 text-lg min-w-[24px] text-center">
+            {cartItem?.quantity || 0}
           </span>
 
-          {/* Increase Quantity Button */}
           <Button
             variant="outline"
-            className="h-8 w-8 rounded-full flex items-center justify-center transition-transform active:scale-90"
+            className="h-8 w-8 rounded-full p-0"
             size="icon"
+            disabled={isMaxStockReached}
             onClick={() => handleUpdateQuantity(cartItem, "plus")}
+            aria-label="Increase quantity"
           >
             <Plus className="w-4 h-4 text-gray-700" />
           </Button>
@@ -111,24 +136,20 @@ function UserCartItemsContent({ cartItem }) {
       </div>
 
       {/* Price & Delete Button */}
-      <div className="flex flex-col items-end">
+      <div className="flex flex-col items-end ml-4">
         <p className="font-semibold text-gray-900 text-lg">
-          $
-          {(
-            (cartItem?.salePrice > 0 ? cartItem?.salePrice : cartItem?.price) *
-            cartItem?.quantity
-          ).toFixed(2)}
+          ${calculatePrice()}
         </p>
 
-        {/* Delete Button with Animation */}
-        <motion.div
-          whileHover={{ scale: 1.2 }}
-          whileTap={{ scale: 0.9 }}
-          className="mt-2 cursor-pointer text-red-500 transition-all hover:text-red-700"
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="mt-2 text-red-500 hover:text-red-700 focus:outline-none"
           onClick={() => handleCartItemDelete(cartItem)}
+          aria-label="Remove item from cart"
         >
           <Trash size={20} />
-        </motion.div>
+        </motion.button>
       </div>
     </motion.div>
   );

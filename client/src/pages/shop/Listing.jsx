@@ -56,36 +56,49 @@ export default function Listing() {
   }
   function handleAddtoCart(getCurrentProductId, getTotalStock) {
     console.log(cartItems);
-    let getCartItems = cartItems?.items || [];
+
+    const getCartItems = cartItems?.items || [];
 
     if (getCartItems.length) {
       const indexOfCurrentItem = getCartItems.findIndex(
         (item) => item.productId === getCurrentProductId
       );
-      if (indexOfCurrentItem > -1) {
-        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
-        if (getQuantity + 1 > getTotalStock) {
-          toast.error(
-            "You cannot add more than available stock quantity in cart."
-          );
 
+      if (indexOfCurrentItem > -1) {
+        const currentQty = getCartItems[indexOfCurrentItem].quantity;
+        if (currentQty + 1 > getTotalStock) {
+          toast.error(
+            "You cannot add more than the available stock in the cart",
+            {
+              style: { background: "#FF3333", color: "#fff" },
+              iconTheme: { primary: "#fff", secondary: "#FF3333" },
+            }
+          );
           return;
         }
       }
     }
+
     dispatch(
       addToCart({
         productId: getCurrentProductId,
         userId: user?.id,
         quantity: 1,
       })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        toast.success("Product added to cart successfully!");
+    ).then((res) => {
+      if (res?.payload?.success) {
+        toast.success(
+          res.payload.message || "Product added to cart successfully!",
+          {
+            style: { background: "#4BB543", color: "#fff" },
+            iconTheme: { primary: "#fff", secondary: "#4BB543" },
+          }
+        );
         setOpenDetailsDialog(false);
       }
     });
   }
+
   function handleSort(value) {
     setSort(value);
   }
