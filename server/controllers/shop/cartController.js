@@ -149,48 +149,62 @@ export const updateCartItemQty = async (req, res) => {
 export const deleteCartItem = async (req, res) => {
   try {
     const { userId, productId } = req.body;
+
+    // Validate inputs
     if (!userId || !productId) {
       return res.status(400).json({
         success: false,
         message: "Please provide all the fields",
       });
     }
+
+    // Find the cart and populate product details
     const cart = await Cart.findOne({ userId }).populate({
       path: "items.productId",
       select: "image title price salePrice",
     });
+
     if (!cart) {
       return res.status(404).json({
         success: false,
         message: "Cart not found",
       });
     }
+
+    // Filter out the deleted item
     cart.items = cart.items.filter(
-      (item) => item.productId.toString() !== productId
+      (item) => item.productId && item.productId.toString() !== productId
     );
+
+    // Save updated cart
     await cart.save();
-    await Cart.populate({
+
+    // Populate again to ensure product details are included
+    await cart.populate({
       path: "items.productId",
       select: "image title price salePrice",
     });
-    const populateCartItems = cart.items.map((item) => ({
-      productId: item.productId ? item.productId._id : null,
-      image: item.productId ? item.productId.image : null,
-      title: item.productId ? item.productId.title : "Product not found",
-      price: item.productId ? item.productId.price : null,
-      salePrice: item.productId ? item.productId.salePrice : null,
+
+    // Format response data
+    const updatedCartItems = cart.items.map((item) => ({
+      productId: item.productId?._id || null,
+      image: item.productId?.image || null,
+      title: item.productId?.title || "Product not found",
+      price: item.productId?.price || null,
+      salePrice: item.productId?.salePrice || null,
       quantity: item.quantity,
     }));
+
     res.status(200).json({
       success: true,
       message: "Item deleted from cart successfully",
-      data: cart,
+      data: updatedCartItems, // Only returning items, not the full cart
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error deleting cart item:", error);
     res.status(500).json({
       success: false,
-      message: "Some error occured",
+      message: "An error occurred while deleting the item",
     });
   }
 };

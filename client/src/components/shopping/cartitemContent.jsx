@@ -1,15 +1,15 @@
 import { Minus, Plus, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteCartItem, updateCartQuantity } from "@/store/shop/cart-slice";
-import { useToast } from "../ui/use-toast";
+import { deleteCartItem, updateCartQuantity } from "@/store/shop/cartSlice";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
 
 function UserCartItemsContent({ cartItem }) {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
   const { productList } = useSelector((state) => state.shopProducts);
-  const dispatch = useDispatch();
-  const { toast } = useToast();
 
   function handleUpdateQuantity(getCartItem, typeOfAction) {
     if (typeOfAction == "plus") {
@@ -30,12 +30,7 @@ function UserCartItemsContent({ cartItem }) {
         if (indexOfCurrentCartItem > -1) {
           const getQuantity = getCartItems[indexOfCurrentCartItem].quantity;
           if (getQuantity + 1 > getTotalStock) {
-            toast({
-              title: `Only ${getQuantity} quantity can be added for this item`,
-              variant: "destructive",
-            });
-
-            return;
+            toast.error("You have reached the maximum stock limit");
           }
         }
       }
@@ -52,9 +47,7 @@ function UserCartItemsContent({ cartItem }) {
       })
     ).then((data) => {
       if (data?.payload?.success) {
-        toast({
-          title: "Cart item is updated successfully",
-        });
+        toast.success(`Quantity updated to ${getCartItem?.quantity}`);
       }
     });
   }
@@ -72,52 +65,72 @@ function UserCartItemsContent({ cartItem }) {
   }
 
   return (
-    <div className="flex items-center space-x-4">
+    <motion.div
+      className="flex items-center space-x-4 p-4 bg-white shadow-md rounded-lg transition-all hover:shadow-lg"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+    >
+      {/* Product Image */}
       <img
         src={cartItem?.image}
         alt={cartItem?.title}
-        className="w-20 h-20 rounded object-cover"
+        className="w-20 h-20 rounded-md object-cover"
       />
+
+      {/* Product Details */}
       <div className="flex-1">
-        <h3 className="font-extrabold">{cartItem?.title}</h3>
-        <div className="flex items-center gap-2 mt-1">
+        <h3 className="font-bold text-lg text-gray-900">{cartItem?.title}</h3>
+        <div className="flex items-center gap-2 mt-2">
+          {/* Decrease Quantity Button */}
           <Button
             variant="outline"
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-full flex items-center justify-center transition-transform active:scale-90"
             size="icon"
             disabled={cartItem?.quantity === 1}
             onClick={() => handleUpdateQuantity(cartItem, "minus")}
           >
-            <Minus className="w-4 h-4" />
-            <span className="sr-only">Decrease</span>
+            <Minus className="w-4 h-4 text-gray-700" />
           </Button>
-          <span className="font-semibold">{cartItem?.quantity}</span>
+
+          {/* Quantity Count */}
+          <span className="font-semibold text-gray-900 text-lg">
+            {cartItem?.quantity}
+          </span>
+
+          {/* Increase Quantity Button */}
           <Button
             variant="outline"
-            className="h-8 w-8 rounded-full"
+            className="h-8 w-8 rounded-full flex items-center justify-center transition-transform active:scale-90"
             size="icon"
             onClick={() => handleUpdateQuantity(cartItem, "plus")}
           >
-            <Plus className="w-4 h-4" />
-            <span className="sr-only">Decrease</span>
+            <Plus className="w-4 h-4 text-gray-700" />
           </Button>
         </div>
       </div>
+
+      {/* Price & Delete Button */}
       <div className="flex flex-col items-end">
-        <p className="font-semibold">
+        <p className="font-semibold text-gray-900 text-lg">
           $
           {(
             (cartItem?.salePrice > 0 ? cartItem?.salePrice : cartItem?.price) *
             cartItem?.quantity
           ).toFixed(2)}
         </p>
-        <Trash
+
+        {/* Delete Button with Animation */}
+        <motion.div
+          whileHover={{ scale: 1.2 }}
+          whileTap={{ scale: 0.9 }}
+          className="mt-2 cursor-pointer text-red-500 transition-all hover:text-red-700"
           onClick={() => handleCartItemDelete(cartItem)}
-          className="cursor-pointer mt-1"
-          size={20}
-        />
+        >
+          <Trash size={20} />
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
