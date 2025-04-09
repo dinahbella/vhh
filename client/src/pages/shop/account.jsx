@@ -1,7 +1,6 @@
 import AdminShoppingLayout from "@/components/shopping/layout";
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import accImg from "../../assets/banner1.png";
 import Address from "@/components/shopping/address";
 import ShoppingOrders from "@/components/shopping/orders";
 export default function Account() {
@@ -10,7 +9,7 @@ export default function Account() {
       <div className="flex flex-col">
         <div className="relative h-[300px] w-full overflow-hidden">
           <img
-            src={accImg}
+            src="/ok.webp"
             className="h-full w-full object-cover object-center"
           />
         </div>
