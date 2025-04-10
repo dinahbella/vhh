@@ -10,22 +10,23 @@ export default function App({ Component, pageProps }) {
         <Toaster
           position="top-right"
           toastOptions={{
+            duration: 3000,
+            className: "custom-toast",
+            style: {
+              fontWeight: "500",
+              borderRadius: "8px",
+              padding: "16px",
+              color: "white",
+            },
             success: {
               style: {
-                background: "#2E8F00", // green-500
-                color: "white",
+                background: "#2E8F00",
               },
             },
             error: {
               style: {
-                background: "#ef4444", // red-500
-                color: "white",
+                background: "#ef4444",
               },
-            },
-            // Optional: default style for other toast types
-            style: {
-              fontWeight: "500",
-              borderRadius: "8px",
             },
           }}
         />

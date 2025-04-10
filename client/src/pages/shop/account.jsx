@@ -9,7 +9,7 @@ export default function Account() {
       <div className="flex flex-col">
         <div className="relative h-[300px] w-full overflow-hidden">
           <img
-            src="/ok.webp"
+            src="/med.png"
             className="h-full w-full object-cover object-center"
           />
         </div>

@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function orders() {
-  return <div>orders</div>;
+export default function ShoppingOrders() {
+  return <div>Orders</div>;
 }
