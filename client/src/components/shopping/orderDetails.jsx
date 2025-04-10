@@ -1,86 +1,115 @@
-import { useSelector } from "react-redux";
-import { Badge } from "../ui/badge";
+import React, { useState } from "react";
 import { DialogContent } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import Form from "../common/form";
 
-function ShoppingOrderDetailsView({ orderDetails }) {
-  const { user } = useSelector((state) => state.auth);
+const initialFormData = {
+  status: "",
+};
+
+export default function ShoppingOrderDetailsView() {
+  const [formData, setFormData] = useState(initialFormData);
+
+  function handleUpdateStatus() {
+    // update order logic here
+  }
 
   return (
-    <DialogContent className="sm:max-w-[600px]">
-      <div className="grid gap-6">
+    <DialogContent className="max-w-[90vw] sm:max-w-[700px]">
+      <div className="grid gap-6 p-2">
+        {/* Order Meta */}
         <div className="grid gap-2">
-          <div className="flex mt-6 items-center justify-between">
-            <p className="font-medium">Order ID</p>
-            <Label>{orderDetails?._id}</Label>
-          </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Order Date</p>
-            <Label>{orderDetails?.orderDate.split("T")[0]}</Label>
-          </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Order Price</p>
-            <Label>${orderDetails?.totalAmount}</Label>
-          </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Payment method</p>
-            <Label>{orderDetails?.paymentMethod}</Label>
-          </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Payment Status</p>
-            <Label>{orderDetails?.paymentStatus}</Label>
-          </div>
-          <div className="flex mt-2 items-center justify-between">
-            <p className="font-medium">Order Status</p>
-            <Label>
-              <Badge
-                className={`py-1 px-3 ${
-                  orderDetails?.orderStatus === "confirmed"
-                    ? "bg-green-500"
-                    : orderDetails?.orderStatus === "rejected"
-                    ? "bg-red-600"
-                    : "bg-black"
-                }`}
-              >
-                {orderDetails?.orderStatus}
-              </Badge>
-            </Label>
-          </div>
-        </div>
-        <Separator />
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <div className="font-medium">Order Details</div>
-            <ul className="grid gap-3">
-              {orderDetails?.cartItems && orderDetails?.cartItems.length > 0
-                ? orderDetails?.cartItems.map((item) => (
-                    <li className="flex items-center justify-between">
-                      <span>Title: {item.title}</span>
-                      <span>Quantity: {item.quantity}</span>
-                      <span>Price: ${item.price}</span>
-                    </li>
-                  ))
-                : null}
-            </ul>
-          </div>
-        </div>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <div className="font-medium">Shipping Info</div>
-            <div className="grid gap-0.5 text-muted-foreground">
-              <span>{user.userName}</span>
-              <span>{orderDetails?.addressInfo?.address}</span>
-              <span>{orderDetails?.addressInfo?.city}</span>
-              <span>{orderDetails?.addressInfo?.pincode}</span>
-              <span>{orderDetails?.addressInfo?.phone}</span>
-              <span>{orderDetails?.addressInfo?.notes}</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+            <div className="space-y-1">
+              <p className="font-medium text-muted-foreground">Order ID</p>
+              <Label>12345</Label>
+            </div>
+            <div className="space-y-1">
+              <p className="font-medium text-muted-foreground">Order Date</p>
+              <Label>12th April, 2025</Label>
+            </div>
+            <div className="space-y-1">
+              <p className="font-medium text-muted-foreground">Order Status</p>
+              <Label className="text-yellow-600">In Progress</Label>
+            </div>
+            <div className="space-y-1">
+              <p className="font-medium text-muted-foreground">Order Total</p>
+              <Label className="text-green-600 font-bold">$500</Label>
             </div>
           </div>
+        </div>
+
+        <Separator className="border-primary border-dashed" />
+
+        {/* Order Items */}
+        <div className="grid gap-3">
+          <h3 className="text-lg font-semibold text-muted-foreground">
+            Products
+          </h3>
+          <ul className="grid gap-2 text-sm">
+            <li className="flex items-center justify-between">
+              <span>Product 1</span>
+              <span>$100</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span>Product 2</span>
+              <span>$200</span>
+            </li>
+            <li className="flex items-center justify-between">
+              <span>Product 3</span>
+              <span>$200</span>
+            </li>
+          </ul>
+        </div>
+
+        <Separator className="border-muted" />
+
+        {/* Shipping Info */}
+        <div className="grid gap-2">
+          <h3 className="text-lg font-semibold text-muted-foreground">
+            Shipping Information
+          </h3>
+          <div className="grid gap-1 text-sm text-muted-foreground">
+            <span className="font-medium text-primary">John Doe</span>
+            <span>123 Main Street</span>
+            <span>Lagos</span>
+            <span>100001</span>
+            <span>+234-800-123-4567</span>
+            <span>Leave at front desk</span>
+          </div>
+        </div>
+
+        <Separator className="border-muted" />
+
+        {/* Status Update Form */}
+        <div className="grid gap-2">
+          <h3 className="text-lg font-semibold text-muted-foreground">
+            Update Status
+          </h3>
+          <Form
+            formControls={[
+              {
+                label: "Order Status",
+                name: "status",
+                componentType: "select",
+                options: [
+                  { id: "pending", label: "Pending" },
+                  { id: "inProcess", label: "In Process" },
+                  { id: "inShipping", label: "In Shipping" },
+                  { id: "delivered", label: "Delivered" },
+                  { id: "rejected", label: "Rejected" },
+                ],
+              },
+            ]}
+            formData={formData}
+            setFormData={setFormData}
+            buttonText={"Update Order Status"}
+            onSubmit={handleUpdateStatus}
+            isBtnDisabled={!formData.status}
+          />
         </div>
       </div>
     </DialogContent>
   );
 }
-
-export default ShoppingOrderDetailsView;
