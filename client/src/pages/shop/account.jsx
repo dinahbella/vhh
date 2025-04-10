@@ -1,8 +1,8 @@
 import AdminShoppingLayout from "@/components/shopping/layout";
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Address from "@/components/shopping/address";
 import ShoppingOrders from "@/components/shopping/orders";
+import Address from "@/components/shopping/address";
 export default function Account() {
   return (
     <AdminShoppingLayout>
