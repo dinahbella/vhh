@@ -8,7 +8,7 @@ import { Separator } from "../ui/separator";
 import { useDispatch, useSelector } from "react-redux";
 import { setProductDetails } from "@/store/shop/productSlice";
 import { addToCart, getCartItems } from "@/store/shop/cartSlice";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 export default function ProductDetails({ open, setOpen, productDetails }) {
   const { user } = useSelector((state) => state.auth);

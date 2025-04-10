@@ -20,7 +20,7 @@ import { ArrowUpDownIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];

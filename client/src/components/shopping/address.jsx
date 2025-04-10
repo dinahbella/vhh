@@ -11,7 +11,7 @@ import {
   fetchAllAddresses,
 } from "@/store/shop/addressSlice";
 import Form from "../common/form";
-import { toast } from "sonner"; // ✅ import added
+import toast from "react-hot-toast";
 
 const initialAddressFormData = {
   address: "",
@@ -104,11 +104,11 @@ function Address({ setCurrentSelectedAddress, selectedId }) {
 
   return (
     <Card>
-      <div className="mb-5 p-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+      <div className="mb-5 p-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {addressList && addressList.length > 0
           ? addressList.map((singleAddressItem) => (
               <AddressCard
-                key={singleAddressItem._id} // ✅ key added
+                key={singleAddressItem._id}
                 selectedId={selectedId}
                 handleDeleteAddress={handleDeleteAddress}
                 addressInfo={singleAddressItem}

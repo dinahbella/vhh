@@ -29,7 +29,7 @@ import {
 } from "@/store/shop/productSlice";
 import ShoppingProductTile from "@/components/shopping/productCard";
 import { useRouter } from "next/router";
-import { toast } from "sonner";
+import { toast } from "react-hot-toast";
 import { addToCart, getCartItems } from "@/store/shop/cartSlice";
 import ProductDetails from "@/components/shopping/ProductDetails";
 
