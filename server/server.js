@@ -9,7 +9,7 @@ import adminProductRouter from "./routes/admin/productRoutes.js";
 import shopProductRouter from "./routes/shop/productRoute.js";
 import cartRouter from "./routes/shop/cartRoute.js";
 import shopAddressRouter from "./routes/shop/addressRoute.js";
-import shopOrderRouter from "./routes/shop/order-routes.js";
+import shopOrderRouter from "./routes/shop/orderRoute.js";
 
 dotenv.config();
 

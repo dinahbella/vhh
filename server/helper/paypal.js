@@ -1,7 +1,7 @@
 import paypal from "paypal-rest-sdk";
 
 paypal.configure({
-  mode: "",
+  mode: "sandbox",
   client_id: "",
   client_secret: "",
 });
